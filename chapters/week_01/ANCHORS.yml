@@ -1,0 +1,27 @@
+# Week 01 锚点验证清单
+
+# 锚点格式：
+# id: 唯一标识符（周内唯一）
+# claim: 待验证的结论
+# evidence: 证据来源（代码示例/数据/测试）
+# verification: 验证方式（测试文件名/脚本命令）
+
+- id: anchor:llm-vs-traditional
+  claim: 对于小样本（<100条）文本分类任务，LLM API 调用的开发周期比传统 BERT 微调短 10 倍以上
+  evidence: 对比两种方法的代码量和步骤（CHAPTER.md 第1节）
+  verification: tests/test_basic_call.py 中的 mock 测试演示了 LLM API 调用的简洁性
+
+- id: anchor:api-call-basic
+  claim: 成功调用 OpenAI Chat Completions API 需要三个必要参数：model、messages、api_key
+  evidence: examples/01_basic_call.py 中的最小可运行代码示例
+  verification: tests/test_basic_call.py 中的 test_basic_call_with_system_message
+
+- id: anchor:token-counting
+  claim: 中文文本的 Token 数约为字数的 1.5-2 倍（取决于模型和切词方式）
+  evidence: examples/06_cost_estimation.py 中的中英文 Token 对比
+  verification: tests/test_token_counting.py 中的 TestTokenCharRatio
+
+- id: anchor:structured-output
+  claim: 使用 JSON Mode 可以让 LLM 输出稳定可解析的 JSON 格式
+  evidence: examples/04_extraction.py 中的实体抽取示例
+  verification: tests/test_classification.py 中的输出格式测试

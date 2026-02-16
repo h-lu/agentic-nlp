@@ -1,0 +1,195 @@
+# 全书术语表（term_zh 唯一）
+#
+# 约定：
+# - term_zh 是校验脚本的主键
+# - term_en 可选
+# - definition_zh 必填（尽量一句话说明清楚）
+# - first_seen 必须是 week_01..week_08 之一
+
+- term_zh: TextAgent
+  term_en: TextAgent
+  definition_zh: 本书贯穿项目的代号：一个 Agentic 文本分析系统，每周增量迭代，最终交付可部署的智能应用。
+  first_seen: week_01
+
+# ─── Week 01 ───
+- term_zh: LLM
+  term_en: Large Language Model
+  definition_zh: 大型语言模型，在海量文本上训练的深度学习模型，能够理解和生成自然语言，如 GPT、Claude、Llama。
+  first_seen: week_01
+
+- term_zh: Token
+  term_en: Token
+  definition_zh: LLM 处理文本的基本单位，一个 Token 约等于 0.75 个英文单词或 0.5 个中文字符。LLM 按 Token 计费。
+  first_seen: week_01
+
+- term_zh: Chat Completions API
+  term_en: Chat Completions API
+  definition_zh: OpenAI 等提供的对话式 API 接口，以消息列表为输入，返回模型生成的回复。
+  first_seen: week_01
+
+- term_zh: 结构化输出
+  term_en: Structured Output
+  definition_zh: 让 LLM 输出符合特定格式（如 JSON Schema）的技术，通过 JSON Mode 或 Function Calling 实现。
+  first_seen: week_01
+
+- term_zh: 范式转变
+  term_en: Paradigm Shift
+  definition_zh: 从"训练模型"到"调用 API"的思维方式变化。传统方法需要收集数据、训练、部署；LLM 方法只需要设计 Prompt、调用 API。
+  first_seen: week_01
+
+- term_zh: API 封装
+  term_en: API Wrapper
+  definition_zh: 统一的 LLM 调用接口设计模式。封装了 API Key 管理、错误处理、日志记录等功能，支持多后端切换。
+  first_seen: week_01
+
+# ─── Week 02 ───
+- term_zh: Prompt Engineering
+  term_en: Prompt Engineering
+  definition_zh: 设计和优化输入给 LLM 的提示词的技术，目标是让模型产生准确、一致的输出。
+  first_seen: week_02
+
+- term_zh: Zero-shot
+  term_en: Zero-shot
+  definition_zh: 不提供任何示例，直接让 LLM 完成任务的方式。
+  first_seen: week_02
+
+- term_zh: Few-shot
+  term_en: Few-shot
+  definition_zh: 在 Prompt 中提供少量示例，让 LLM 学习任务模式的方式。
+  first_seen: week_02
+
+- term_zh: Chain-of-Thought
+  term_en: Chain-of-Thought (CoT)
+  definition_zh: 思维链，让 LLM 展示推理过程的技术，通过"Let's think step by step"等引导语实现。
+  first_seen: week_02
+
+- term_zh: LLM-as-Judge
+  term_en: LLM-as-Judge
+  definition_zh: 使用一个 LLM 来评估另一个 LLM 输出质量的方法。
+  first_seen: week_02
+
+# ─── Week 03 ───
+- term_zh: RAG
+  term_en: Retrieval-Augmented Generation
+  definition_zh: 检索增强生成，先从知识库检索相关文档，再将检索结果作为上下文输入 LLM 生成回答的技术。
+  first_seen: week_03
+
+- term_zh: Embedding
+  term_en: Embedding
+  definition_zh: 文本嵌入，将文本转换为高维向量的过程，语义相似的文本在向量空间中距离较近。
+  first_seen: week_03
+
+- term_zh: 向量数据库
+  term_en: Vector Database
+  definition_zh: 专门存储和检索向量数据的数据库，支持向量相似度搜索，如 ChromaDB、FAISS、Milvus。
+  first_seen: week_03
+
+- term_zh: 文本切分
+  term_en: Text Chunking
+  definition_zh: 将长文档切分成较小片段的过程，是 RAG 系统的关键预处理步骤。
+  first_seen: week_03
+
+- term_zh: 幻觉
+  term_en: Hallucination
+  definition_zh: LLM 生成看似合理但实际不正确或不存在的信息的现象。RAG 是缓解幻觉的主要方法之一。
+  first_seen: week_03
+
+# ─── Week 04 ───
+- term_zh: 混合检索
+  term_en: Hybrid Search
+  definition_zh: 结合向量检索（语义相似）和关键词检索（精确匹配）的检索策略。
+  first_seen: week_04
+
+- term_zh: 重排序
+  term_en: Re-ranking
+  definition_zh: 对检索结果进行二次排序的技术，使用更精确的模型（如 Cross-Encoder）提升相关性。
+  first_seen: week_04
+
+- term_zh: 查询重写
+  term_en: Query Rewriting
+  definition_zh: 使用 LLM 改写用户查询，使其更适合检索的技术。
+  first_seen: week_04
+
+- term_zh: RAGAS
+  term_en: RAGAS
+  definition_zh: RAG 评估框架，提供忠实度、答案相关性、上下文精确度等指标。
+  first_seen: week_04
+
+# ─── Week 05 ───
+- term_zh: Agent
+  term_en: LLM Agent
+  definition_zh: 能够自主规划、调用工具、执行任务的 LLM 系统，从"回答问题"进化为"解决问题"。
+  first_seen: week_05
+
+- term_zh: Function Calling
+  term_en: Function Calling
+  definition_zh: LLM 调用外部函数/工具的能力，通过定义工具描述让模型选择并调用合适的工具。
+  first_seen: week_05
+
+- term_zh: ReAct
+  term_en: ReAct
+  definition_zh: Reasoning + Acting，一种 Agent 模式，交替进行推理（Thought）和行动（Action）。
+  first_seen: week_05
+
+- term_zh: 工具调用
+  term_en: Tool Use
+  definition_zh: Agent 调用外部工具（如搜索、计算器、API）来完成任务的机制。
+  first_seen: week_05
+
+# ─── Week 06 ───
+- term_zh: 多智能体系统
+  term_en: Multi-Agent System
+  definition_zh: 多个 Agent 协作完成复杂任务的系统，每个 Agent 扮演特定角色。
+  first_seen: week_06
+
+- term_zh: Agentic RAG
+  term_en: Agentic RAG
+  definition_zh: Agent 主动控制检索过程的 RAG 系统，可以自主决定何时检索、检索什么、如何使用检索结果。
+  first_seen: week_06
+
+- term_zh: Human-in-the-Loop
+  term_en: Human-in-the-Loop
+  definition_zh: 人工介入的 AI 系统设计，在关键决策点引入人工审核或确认。
+  first_seen: week_06
+
+- term_zh: AutoGen
+  term_en: AutoGen
+  definition_zh: 微软开发的多智能体框架，支持 Agent 之间的对话式协作。
+  first_seen: week_06
+
+# ─── Week 07 ───
+- term_zh: 可观测性
+  term_en: Observability
+  definition_zh: 对 LLM 应用的运行状态、成本、质量的全面监控能力，包括 Trace、日志、指标。
+  first_seen: week_07
+
+- term_zh: LangSmith
+  term_en: LangSmith
+  definition_zh: LangChain 提供的 LLM 应用开发平台，支持调试、测试、评估和监控。
+  first_seen: week_07
+
+- term_zh: 流式输出
+  term_en: Streaming
+  definition_zh: LLM 逐 Token 返回生成内容的方式，可以降低用户感知的延迟。
+  first_seen: week_07
+
+- term_zh: 模型量化
+  term_en: Model Quantization
+  definition_zh: 降低模型参数精度的技术（如 FP16 → INT8），用于减少模型大小和推理延迟。
+  first_seen: week_07
+
+# ─── Week 08 ───
+- term_zh: 端到端系统
+  term_en: End-to-End System
+  definition_zh: 从用户输入到最终输出的完整系统，整合 LLM、RAG、Agent 等所有组件。
+  first_seen: week_08
+
+- term_zh: A/B 测试
+  term_en: A/B Testing
+  definition_zh: 对比不同版本（如不同 Prompt、不同模型）效果的方法，用于迭代优化。
+  first_seen: week_08
+
+- term_zh: 灰度发布
+  term_en: Canary Deployment
+  definition_zh: 逐步将新版本推广给部分用户的发布策略，用于降低风险。
+  first_seen: week_08

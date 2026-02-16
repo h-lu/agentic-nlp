@@ -1,0 +1,27 @@
+# Week 01 术语表
+
+# 术语格式：
+# term_en: 英文术语
+# term_zh: 中文术语
+# definition_zh: 简短定义（新手可复述）
+# first_seen: 首次出现的章节
+
+- term_en: Paradigm Shift
+  term_zh: 范式转变
+  definition_zh: 从"训练模型"到"调用 API"的思维方式变化。传统方法需要收集数据、训练、部署；LLM 方法只需要设计 Prompt、调用 API。
+  first_seen: week_01
+
+- term_en: Token
+  term_zh: Token
+  definition_zh: LLM 处理文本的基本单位，一个 Token 约等于 0.75 个英文单词或 0.5 个中文字符。LLM 按 Token 计费。
+  first_seen: week_01
+
+- term_en: API Wrapper
+  term_zh: API 封装
+  definition_zh: 统一的 LLM 调用接口设计模式。封装了 API Key 管理、错误处理、日志记录等功能，支持多后端切换。
+  first_seen: week_01
+
+- term_en: Structured Output
+  term_zh: 结构化输出
+  definition_zh: 让 LLM 输出符合预定义 JSON Schema 的数据格式。包括 JSON Mode、Function Calling、Structured Outputs 等方式。
+  first_seen: week_01
