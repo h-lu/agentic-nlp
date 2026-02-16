@@ -1,0 +1,33 @@
+# Week 02 术语表
+#
+# 本周新术语登记，将同步到 shared/glossary.yml
+
+- term_zh: Prompt 设计原则
+  term_en: Prompt Design Principles
+  definition_zh: 设计有效 Prompt 的四个核心要素：角色（Role）、任务（Task）、约束（Constraints）、格式（Format）。四要素框架帮助开发者构建清晰、无歧义的指令。
+  first_seen: week_02
+
+- term_zh: Zero-shot
+  term_en: Zero-shot Learning
+  definition_zh: 不提供任何示例，直接让 LLM 完成任务的方式。适用于简单任务或 LLM 已经具备相关知识的场景。
+  first_seen: week_02
+
+- term_zh: Few-shot Learning
+  term_en: Few-shot Learning
+  definition_zh: 在 Prompt 中提供少量示例（通常 3-5 个），引导 LLM 按照期望的格式和风格输出。可以显著提升输出格式的稳定性。
+  first_seen: week_02
+
+- term_zh: Chain-of-Thought
+  term_en: Chain-of-Thought (CoT)
+  definition_zh: 思维链提示技术，让 LLM 在给出最终答案前先进行分步推理。通过显式要求"让我们一步步思考"可以显著提升复杂推理任务的准确率。
+  first_seen: week_02
+
+- term_zh: Prompt 评估
+  term_en: Prompt Evaluation
+  definition_zh: 系统化评估 Prompt 效果的方法论，包括构建测试集、定义评估指标（准确率、格式合规率等）、进行版本对比。强调需要量化数据支持迭代决策。
+  first_seen: week_02
+
+- term_zh: LLM-as-Judge
+  term_en: LLM-as-Judge
+  definition_zh: 使用一个 LLM 来评估另一个 LLM 输出质量的方法。常用于自动化评估场景，但需要设计良好的评估 Prompt。
+  first_seen: week_02

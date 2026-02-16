@@ -58,6 +58,11 @@
   definition_zh: 在 Prompt 中提供少量示例，让 LLM 学习任务模式的方式。
   first_seen: week_02
 
+- term_zh: Few-shot Learning
+  term_en: Few-shot Learning
+  definition_zh: 在 Prompt 中提供少量示例（通常 3-5 个），引导 LLM 按照期望的格式和风格输出的技术。
+  first_seen: week_02
+
 - term_zh: Chain-of-Thought
   term_en: Chain-of-Thought (CoT)
   definition_zh: 思维链，让 LLM 展示推理过程的技术，通过"Let's think step by step"等引导语实现。
@@ -66,6 +71,16 @@
 - term_zh: LLM-as-Judge
   term_en: LLM-as-Judge
   definition_zh: 使用一个 LLM 来评估另一个 LLM 输出质量的方法。
+  first_seen: week_02
+
+- term_zh: Prompt 设计原则
+  term_en: Prompt Design Principles
+  definition_zh: 设计有效 Prompt 的四个核心要素：角色（Role）、任务（Task）、约束（Constraints）、格式（Format）。
+  first_seen: week_02
+
+- term_zh: Prompt 评估
+  term_en: Prompt Evaluation
+  definition_zh: 系统化评估 Prompt 效果的方法论，包括构建测试集、定义评估指标、进行版本对比。
   first_seen: week_02
 
 # ─── Week 03 ───
