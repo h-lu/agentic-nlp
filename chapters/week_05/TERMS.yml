@@ -1,0 +1,38 @@
+# Week 05 术语登记
+#
+# 本章新术语，待合入 shared/glossary.yml
+
+- term_zh: Agent 架构
+  term_en: Agent Architecture
+  definition_zh: Agent 的四大核心能力：感知（理解用户目标）、规划（拆解任务）、执行（调用工具）、反思（调整策略）。与 Chatbot 的本质区别在于 Agent 能主动规划和执行多步骤任务。
+  first_seen: week_05
+  revisited: [week_06, week_08]
+  bloom_level: understand
+
+- term_zh: Function Calling
+  term_en: Function Calling
+  definition_zh: 让 LLM 返回结构化的"工具调用指令"而非自然语言答案的能力。LLM 只决定"调用什么工具、传什么参数"，由系统执行工具，确保安全可控。
+  first_seen: week_05
+  revisited: [week_06, week_08]
+  bloom_level: apply
+
+- term_zh: ReAct 模式
+  term_en: ReAct Pattern
+  definition_zh: Reasoning + Acting 模式，让 Agent 交替进行推理（Thought）和行动（Action），观察结果（Observation）后继续循环，直到完成任务。本质上是 Chain-of-Thought + 工具调用。
+  first_seen: week_05
+  revisited: [week_06]
+  bloom_level: apply
+
+- term_zh: 任务分解
+  term_en: Task Decomposition
+  definition_zh: 将复杂任务拆解为可执行的子步骤。常用 Few-shot 示例教 LLM 学会规划，生成带依赖关系的步骤列表，然后按顺序执行。
+  first_seen: week_05
+  revisited: [week_06]
+  bloom_level: apply
+
+- term_zh: 工具定义
+  term_en: Tool Definition
+  definition_zh: 用 JSON Schema 描述工具的能力，包括工具名称、功能描述、参数类型和约束。工具描述的清晰度直接影响 LLM 的调用准确性。
+  first_seen: week_05
+  revisited: [week_06]
+  bloom_level: apply

@@ -1,0 +1,47 @@
+# Week 05 锚点登记
+#
+# 本章可验证的重要结论。
+
+- id: week_05_agent_vs_chatbot
+  claim: Agent 与 Chatbot 的本质区别是 Agent 能主动规划和执行多步骤任务，而 Chatbot 只能被动回答问题。
+  evidence: |
+    CHAPTER.md 第 1 节，通过小北的"客户反馈分析"场景展示：Chatbot 只能给出泛泛而谈的总结，而 Agent 能规划步骤、调用工具、完成复杂任务。
+  verification: |
+    examples/01_agent_vs_chatbot.py 中有对比演示代码。
+
+- id: week_05_function_calling_safety
+  claim: Function Calling 比"让 LLM 直接执行代码"更安全，因为 LLM 只决定"做什么"，由系统执行。
+  evidence: |
+    CHAPTER.md 第 2 节，通过阿码的 `exec()` 故事展示直接执行代码的危险性，以及 Function Calling 的安全设计。
+  verification: |
+    examples/02_function_calling.py 中实现了安全的工具调用流程。
+
+- id: week_05_react_loop
+  claim: ReAct 模式的核心是 Thought-Action-Observation 循环，让 Agent 交替推理和行动。
+  evidence: |
+    CHAPTER.md 第 3 节，通过"分析客户反馈"的完整流程展示 ReAct 循环：先思考 → 再行动 → 观察结果 → 继续循环。
+  verification: |
+    examples/03_react_agent.py 中实现了 ReAct Agent。
+    tests/test_react_agent.py 中有相关测试。
+
+- id: week_05_planning_efficiency
+  claim: 带规划的 Agent 比无规划的 Agent 更高效，能避免"边做边想"导致的反复调整。
+  evidence: |
+    CHAPTER.md 第 4 节，对比两种做法：做法 A（无规划）反复调整步骤，做法 B（有规划）按顺序执行。
+  verification: |
+    examples/04_task_planning.py 中实现了规划 Agent。
+    tests/test_planning_agent.py 中有相关测试。
+
+- id: week_05_tool_description_quality
+  claim: 工具描述的清晰度直接影响 LLM 的调用准确性，描述应包含功能说明、参数约束、使用边界。
+  evidence: |
+    CHAPTER.md 第 2 节的"工具描述好坏对比表格"，展示 5 个好坏示例的对比。
+  verification: |
+    examples/02_function_calling.py 中的工具定义遵循最佳实践。
+
+- id: week_05_max_iterations_purpose
+  claim: max_iterations 参数的主要用途是"防止死循环的安全阀"，而非"正常步数上限"。
+  evidence: |
+    CHAPTER.md 第 3 节，阿码发现 Agent 连续调用 5 次同一工具的问题，解释 max_iterations 的真正含义。
+  verification: |
+    examples/03_react_agent.py 中实现了 max_iterations 检查。
