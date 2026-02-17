@@ -1,7 +1,7 @@
 # Week 03：RAG —— 让 LLM "查资料再回答"
 
-> "Knowledge is of two kinds. We know a subject ourselves, or we know where we can find information upon it."
-> — Samuel Johnson
+> "学而不思则罔，思而不学则殆。"
+> — 孔子
 
 前两周你学会了和 LLM "对话"——写 Prompt、调参数、评估效果。但有一个问题一直悬在头顶：LLM 的知识是"冻结"的。它只知道训练数据里见过的东西，而你问的企业内部文档、最新产品手册、上周刚发布的政策，它一概不知。硬问？它可能会自信地编一个看起来很像真的答案。这就是**幻觉**（Hallucination）问题，也是 2024-2025 年企业落地 LLM 的最大障碍。多项行业调研显示，"准确性不足"和"幻觉风险"是企业阻碍 LLM 生产部署的首要顾虑之一。到 2025 年，RAG（Retrieval-Augmented Generation，检索增强生成）几乎成为企业 LLM 应用的标配架构——从 OpenAI 官方的 Assistants API 到各类企业知识库产品，都把"先检索、再生成"作为核心设计（[参考](https://keerok.tech/en/blog/enterprise-rag-building-an-ai-knowledge-base-in-2026/)）。RAG 的原理不复杂：用户提问时，先从你的知识库里找到相关片段，把这些片段作为"参考资料"塞进 Prompt，再让 LLM 基于这些资料生成回答。这周我们不谈理论模型，而是动手搭一个能跑的 RAG 系统——从文档切分到向量检索，从 Embedding 到组装 Prompt，一步一步来。
 

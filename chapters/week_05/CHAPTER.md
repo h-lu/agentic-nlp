@@ -1,7 +1,7 @@
 # Week 05：让 LLM 不只是回答问题 —— 从 RAG 到 Agent
 
-> "The question of whether a computer can think is no more interesting than the question of whether a submarine can swim."
-> — Edsger W. Dijkstra
+> "工欲善其事，必先利其器。"
+> — 孔子
 
 2024 年的一个午后，一位开发者演示了他刚写的"客服机器人"。演示很顺利——能回答常见问题，能查订单状态，甚至能"智能"推荐产品。但在 Q&A 环节，有人问："它能帮我退款吗？"
 
