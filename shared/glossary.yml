@@ -268,9 +268,24 @@
   first_seen: week_06
 
 # ─── Week 07 ───
+- term_zh: LLM 应用评估
+  term_en: LLM Application Evaluation
+  definition_zh: 从效果、成本、延迟多维度评估 LLM 应用质量的体系，包括忠实度、相关性、Token 成本、响应时间等指标。
+  first_seen: week_07
+
+- term_zh: 成本优化
+  term_en: Cost Optimization
+  definition_zh: 通过模型选择、Prompt 精简、缓存策略等手段降低 LLM 应用成本的技术。
+  first_seen: week_07
+
 - term_zh: 可观测性
   term_en: Observability
-  definition_zh: 对 LLM 应用的运行状态、成本、质量的全面监控能力，包括 Trace、日志、指标。
+  definition_zh: 通过日志、指标、Trace 三大支柱全面监控 LLM 应用运行状态的能力，支持问题定位和性能分析。
+  first_seen: week_07
+
+- term_zh: 部署实践
+  term_en: Deployment Practices
+  definition_zh: 将 LLM 应用从本地脚本转化为生产级服务的过程，包括 API 部署、容器化、监控告警等。
   first_seen: week_07
 
 - term_zh: LangSmith
@@ -291,15 +306,60 @@
 # ─── Week 08 ───
 - term_zh: 端到端系统
   term_en: End-to-End System
-  definition_zh: 从用户输入到最终输出的完整系统，整合 LLM、RAG、Agent 等所有组件。
+  definition_zh: 从用户输入到最终输出的完整系统，整合 LLM、RAG、Agent、评估、部署等所有组件。
+  first_seen: week_08
+
+- term_zh: 端到端系统设计
+  term_en: End-to-End System Design
+  definition_zh: 从用户输入到最终输出的完整系统设计，整合 LLM、RAG、Agent、评估、部署等所有模块，关注模块间的协作与数据流。
+  first_seen: week_08
+
+- term_zh: 商业落地
+  term_en: Business Deployment
+  definition_zh: 将技术系统转化为商业价值的过程，包括价值证明、风险控制、演示准备、决策支持等。
   first_seen: week_08
 
 - term_zh: A/B 测试
   term_en: A/B Testing
-  definition_zh: 对比不同版本（如不同 Prompt、不同模型）效果的方法，用于迭代优化。
+  definition_zh: 对比不同版本（如不同 Prompt、不同模型）效果的实验方法，通过随机分配流量、收集数据、统计检验来验证哪个版本更好。
   first_seen: week_08
 
 - term_zh: 灰度发布
   term_en: Canary Deployment
-  definition_zh: 逐步将新版本推广给部分用户的发布策略，用于降低风险。
+  definition_zh: 逐步将新版本推广给部分用户的发布策略，从 5% → 25% → 50% → 100%，用于降低风险和快速发现问题。
+  first_seen: week_08
+
+- term_zh: 模块化设计
+  term_en: Modular Design
+  definition_zh: 将系统拆分为独立、可替换的模块，每个模块只做一件事，通过接口通信。模块化提高可维护性和可扩展性。
+  first_seen: week_08
+
+- term_zh: 配置管理
+  term_en: Configuration Management
+  definition_zh: 将系统参数外置到配置文件，支持不同环境（开发、测试、生产）的切换，便于维护和版本控制。
+  first_seen: week_08
+
+- term_zh: 系统初始化
+  term_en: System Bootstrap
+  definition_zh: 创建和组装系统组件的过程，通常在一个统一的函数中完成，是理解系统架构的入口点。
+  first_seen: week_08
+
+- term_zh: 商业价值计算器
+  term_en: Business Value Calculator
+  definition_zh: 用于计算系统商业价值的工具，包括成本节省、ROI、回本周期等指标，将技术指标转化为商业语言。
+  first_seen: week_08
+
+- term_zh: 回滚方案
+  term_en: Rollback Plan
+  definition_zh: 当系统出现问题时恢复到稳定状态的方案，包括触发条件、回滚动作、降级系统等。
+  first_seen: week_08
+
+- term_zh: 交付清单
+  term_en: Delivery Checklist
+  definition_zh: 确保项目完整交付的检查列表，包括代码、文档、部署、监控、知识传承等各个方面。
+  first_seen: week_08
+
+- term_zh: 工作流编排器
+  term_en: Workflow Orchestrator
+  definition_zh: 端到端系统的核心组件，负责协调 Agent、管理数据流、处理错误，确保任务按正确顺序执行。
   first_seen: week_08

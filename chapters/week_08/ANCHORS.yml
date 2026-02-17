@@ -1,0 +1,41 @@
+# Week 08 锚点（可验证的关键结论）
+
+- id: week_08_01
+  claim: 端到端系统设计的核心是清晰的架构和模块化设计
+  evidence: WorkflowOrchestrator 将 Planner、Executor、Retriever、Reviewer 四个 Agent 协调起来，TaskContext 作为数据总线在各模块间传递信息
+  verification: 实现 create_system 函数，验证端到端流程能正确执行
+
+- id: week_08_02
+  claim: 配置管理让系统更灵活，切换环境不需要修改代码
+  evidence: SystemConfig.from_yaml() 可以从 YAML 文件加载配置，支持不同环境的切换
+  verification: 创建 development.yaml 和 production.yaml，验证系统能正确加载不同配置
+
+- id: week_08_03
+  claim: 商业价值报告需要用具体数字说话，而不是技术术语
+  evidence: BusinessValueCalculator 计算出"90 天节省 $220,500"和"98.6% 节省比例"，这些数字比"忠实度提升 13%"更有说服力
+  verification: 实现商业价值计算器，验证计算结果合理
+
+- id: week_08_04
+  claim: A/B 测试用统计方法验证差异的真实性
+  evidence: ABTestEngine 使用 scipy.stats.ttest_ind 计算 p 值，p < 0.05 表示差异具有统计显著性
+  verification: 实现 A/B 测试引擎，验证统计检验结果正确
+
+- id: week_08_05
+  claim: 灰度发布通过逐步扩大流量来控制风险
+  evidence: CanaryDeployment 按照 5% → 25% → 50% → 100% 的阶段逐步扩大新版本流量
+  verification: 实现灰度发布控制器，验证流量分配正确
+
+- id: week_08_06
+  claim: 文档是项目生命线，写给接手的陌生人看
+  evidence: README、架构文档、API 文档、运维手册四层文档，分别面向不同受众
+  verification: 撰写完整文档，验证陌生人能理解系统
+
+- id: week_08_07
+  claim: 回滚方案是商业落地的保险，出问题时能快速恢复
+  evidence: ProductionSystem.check_health() 检查触发条件，不满足时自动切换到降级系统
+  verification: 实现回滚方案，验证触发条件有效
+
+- id: week_08_08
+  claim: 项目的价值不仅在于"能跑"，还在于"可交付、可维护、可迭代"
+  evidence: 完整的交付清单包括代码、文档、部署、监控、知识传承
+  verification: 检查交付清单，确保所有项目都完成

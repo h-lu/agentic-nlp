@@ -1,0 +1,73 @@
+# Week 07 锚点定义
+#
+# 每个锚点代表一个可验证的核心结论或最佳实践
+# 定义格式：
+# - id: 唯一标识符（周内唯一）
+#   claim: 要验证的声明
+#   evidence: 证据来源（代码示例、测试用例）
+#   verification: 验证方法
+
+# ─── 第 1 节：评估体系 ───
+
+- id: week_07_cost_tracker_accuracy
+  claim: CostTracker 可以准确计算 LLM 调用成本，误差在 0.01 美元以内
+  evidence: examples/01_cost_tracker.py
+  verification: pytest tests/test_cost_tracker.py::test_cost_calculation
+
+- id: week_07_multi_agent_cost_comparison
+  claim: 多 Agent 系统成本是单 Agent 的 3-4 倍，效果提升 10-15%
+  evidence: CHAPTER.md 第 1 节对比表格
+  verification: 通过 CostTracker 对比单 Agent 和多 Agent 的成本
+
+- id: week_07_evaluator_metrics
+  claim: LLM-as-Judge 可以评估忠实度和相关性，与人工评估相关性 > 0.8
+  evidence: examples/02_evaluation.py
+  verification: pytest tests/test_evaluator.py
+
+# ─── 第 2 节：成本优化 ───
+
+- id: week_07_model_selection_savings
+  claim: 按 Agent 职责选择模型可降低 40-50% 成本，效果损失 < 5%
+  evidence: examples/03_cost_optimization.py
+  verification: pytest tests/test_cost_tracker.py::test_cost_by_agent
+
+- id: week_07_cache_savings
+  claim: 语义缓存可降低 30-50% 的重复查询成本
+  evidence: examples/03_cost_optimization.py (SemanticCache)
+  verification: 对比有无缓存的 LLM 调用次数
+
+- id: week_07_optimization_tradeoff
+  claim: 成本优化后效果下降 2%，成本降低 56%，延迟降低 34%
+  evidence: CHAPTER.md 第 2 节对比表格
+  verification: 运行评估流水线对比优化前后
+
+# ─── 第 3 节：API 部署 ───
+
+- id: week_07_streaming_latency
+  claim: 流式输出可将用户感知的首次响应延迟从 6 秒降至 < 1 秒
+  evidence: examples/04_fastapi_service.py (analyze_stream)
+  verification: 测量流式输出的首字节时间
+
+- id: week_07_retry_resilience
+  claim: 指数退避重试可在 API 限流时自动恢复，成功率 > 99%
+  evidence: examples/04_fastapi_service.py (RobustLLMClient)
+  verification: pytest tests/test_api.py::test_retry
+
+# ─── 第 4 节：可观测性 ───
+
+- id: week_07_trace_debugging
+  claim: Trace 可以追踪完整的请求链路，问题定位时间从小时级降至分钟级
+  evidence: examples/05_observability.py (TraceContext)
+  verification: pytest tests/test_observability.py::test_trace
+
+- id: week_07_alert_detection
+  claim: 告警规则可在成本/延迟/错误率异常时及时通知，平均检测时间 < 5 分钟
+  evidence: examples/05_observability.py (AlertManager)
+  verification: pytest tests/test_observability.py::test_alerts
+
+# ─── TextAgent 进度 ───
+
+- id: week_07_textagent_production
+  claim: TextAgent 可作为生产级 API 服务运行，支持评估、优化、可观测性
+  evidence: examples/07_textagent_production.py
+  verification: pytest tests/test_smoke.py

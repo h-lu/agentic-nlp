@@ -1,0 +1,30 @@
+# Week 07 术语登记
+#
+# 本周新术语（预算：4 个）
+# 待合入 shared/glossary.yml
+
+- term_zh: LLM 应用评估
+  term_en: LLM Application Evaluation
+  definition_zh: 从效果、成本、延迟多维度评估 LLM 应用质量的体系，包括忠实度、相关性、Token 成本、响应时间等指标。
+  first_seen: week_07
+
+- term_zh: 成本优化
+  term_en: Cost Optimization
+  definition_zh: 通过模型选择、Prompt 精简、缓存策略等手段降低 LLM 应用成本的技术。
+  first_seen: week_07
+
+- term_zh: 可观测性
+  term_en: Observability
+  definition_zh: 通过日志、指标、Trace 三大支柱全面监控 LLM 应用运行状态的能力，支持问题定位和性能分析。
+  first_seen: week_07
+
+- term_zh: 部署实践
+  term_en: Deployment Practices
+  definition_zh: 将 LLM 应用从本地脚本转化为生产级服务的过程，包括 API 部署、容器化、监控告警等。
+  first_seen: week_07
+
+# 本周回顾桥（已在 shared/glossary.yml 中）
+# - RAG 评估 (week_04)
+# - Token 与成本 (week_01)
+# - Prompt 设计原则 (week_02)
+# - 多智能体系统 (week_06)
