@@ -6,22 +6,22 @@ import rehypeKatex from 'rehype-katex';
 
 // =============================================================================
 // Docusaurus 配置文件
-// 修改以下配置以适应你的课程
+// 《LLM 时代的文本智能与商务应用》课程站点
 // =============================================================================
 
 const config: Config = {
   // 站点基本信息
-  title: '统计学与 Agentic 数据分析',
-  tagline: '用工程化思维掌握统计推断与可复现分析',
+  title: 'LLM 时代的文本智能与商务应用',
+  tagline: '用工程化 + Agentic 工作流掌握 LLM 时代的文本应用开发',
   favicon: 'img/favicon.ico',
 
   // 站点 URL 配置（部署时根据实际情况修改）
-  url: 'https://statistics-agentic-coding.netlify.app',
+  url: 'https://agentic-nlp.netlify.app',
   baseUrl: '/',
 
   // GitHub 配置
-  organizationName: 'Shanghai Institute of Technology',
-  projectName: 'statistics-agentic-coding',
+  organizationName: 'h-lu',
+  projectName: 'agentic-nlp',
 
   // 错误处理配置
   onBrokenLinks: 'warn',
@@ -40,7 +40,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/wangxq/statistics-agentic-coding/tree/main/templates/docusaurus-site/site/',
+          editUrl: 'https://github.com/h-lu/agentic-nlp/tree/main/templates/docusaurus-site/site/',
           showLastUpdateAuthor: false,
           showLastUpdateTime: false,
           breadcrumbs: true,
@@ -67,7 +67,7 @@ const config: Config = {
 
     // 导航栏配置
     navbar: {
-      title: '统计学与 Agentic 数据分析',
+      title: 'LLM 时代的文本智能',
       logo: {
         alt: 'Course Logo',
         src: 'img/logo.svg',
@@ -89,7 +89,7 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: 'https://github.com/wangxq/statistics-agentic-coding',
+          href: 'https://github.com/h-lu/agentic-nlp',
           label: 'GitHub',
           position: 'right',
         },
@@ -131,12 +131,12 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/wangxq/statistics-agentic-coding',
+              href: 'https://github.com/h-lu/agentic-nlp',
             },
           ],
         },
       ],
-      copyright: `Copyright \u00a9 ${new Date().getFullYear()} 统计学与 Agentic 数据分析. Built with Docusaurus.`,
+      copyright: `Copyright \u00a9 ${new Date().getFullYear()} LLM 时代的文本智能与商务应用. Built with Docusaurus.`,
     },
 
     // 代码高亮配置
@@ -183,7 +183,7 @@ const config: Config = {
   themes: [],
 
   customFields: {
-    courseName: '统计学与 Agentic 数据分析',
+    courseName: 'LLM 时代的文本智能与商务应用',
     courseVersion: '2026.1',
   },
 };
