@@ -1,0 +1,47 @@
+# Week 03 锚点列表
+#
+# 每个锚点必须包含：
+# - id: 唯一标识符
+# - claim: 可验证的声明
+# - evidence: 支持声明的证据（代码位置/数据来源）
+# - verification: 验证方法
+
+- id: chunk-size-impact
+  claim: "较小的 chunk size (如 200-500 字符) 适合精确检索，较大的 chunk size (如 1000-2000 字符) 保留更多上下文，但可能引入噪声"
+  evidence: "examples/01_chunking_demo.py 中 TestChunkSizeImpact 测试类展示了不同 chunk size 的效果对比"
+  verification: "运行 python3 examples/01_chunking_demo.py，观察不同 chunk size 下的检索质量"
+
+- id: embedding-dimension-1536
+  claim: "OpenAI text-embedding-3-small 模型生成的嵌入向量维度为 1536"
+  evidence: "examples/02_embedding_demo.py 第 51-57 行：response.data[0].embedding 返回 1536 维向量"
+  verification: "运行测试：pytest chapters/week_03/tests/test_embedding.py::TestEmbeddingDimension::test_embedding_dimension_1536"
+
+- id: cosine-similarity-range
+  claim: "余弦相似度的值范围是 [-1, 1]，其中 1 表示完全相似，0 表示无相关性，-1 表示相反"
+  evidence: "examples/02_embedding_demo.py 第 31-49 行：cosine_similarity 函数实现"
+  verification: "运行测试：pytest chapters/week_03/tests/test_embedding.py::TestSimilarityCalculation"
+
+- id: chromadb-retrieval
+  claim: "ChromaDB 可以在 100ms 内完成 10K 文档的相似度检索（使用 HNSW 索引）"
+  evidence: "tests/test_chromadb.py 中 TestChromaDBPerformance 测试类验证查询延迟"
+  verification: "运行测试：pytest chapters/week_03/tests/test_chromadb.py::TestChromaDBPerformance"
+
+- id: rag-hallucination-mitigation
+  claim: "RAG 通过将检索到的上下文注入 Prompt，让 LLM 基于已知资料生成回答，从而减少幻觉"
+  evidence: "examples/04_rag_pipeline.py 中 generate_answer 函数将检索结果作为上下文传递给 LLM"
+  verification: "运行测试：pytest chapters/week_03/tests/test_rag_pipeline.py::TestRAGHallucinationMitigation"
+
+- id: rag-prompt-integration
+  claim: "RAG 的 Prompt 应包含：角色定义 + 参考文档（带来源标注）+ 用户问题 + 输出约束"
+  evidence: "examples/04_rag_pipeline.py 第 177-195 行的 prompt 构建逻辑"
+  verification: "运行测试：pytest chapters/week_03/tests/test_rag_pipeline.py::TestRAGPromptIntegration"
+
+- id: chinese-text-separators
+  claim: "中文文本切分应优先使用中文标点（句号、逗号、分号等）作为分隔符，以保持语义完整性"
+  evidence: "CHAPTER.md 第 2 节讨论了中文分隔符的选择；examples/01_chunking_demo.py 展示了 chinese_separators 配置"
+  verification: "运行测试：pytest chapters/week_03/tests/test_chunking.py::TestChineseTextSeparators"
+
+- id: overlap-prevents-boundary-loss
+  claim: "Chunk overlap (通常 10-20%) 可以防止关键信息被切在 chunk 边界处"
+  evidence: "examples/01_chunking_demo.py 展示了 overlap 参数的作用"
+  verification: "运行测试：pytest chapters/week_03/tests/test_chunking.py::TestFixedChunking::test_chunk_overlap"
