@@ -1,0 +1,42 @@
+# Week 06 术语表
+# 约定：term_zh 是主键，必须与 shared/glossary.yml 中的定义一致
+
+- term_zh: 多智能体系统
+  term_en: Multi-Agent System
+  definition_zh: 多个 Agent 协作完成复杂任务的系统，每个 Agent 扮演特定角色。
+  first_seen: week_06
+
+- term_zh: Agentic RAG
+  term_en: Agentic RAG
+  definition_zh: Agent 主动控制检索过程的 RAG 系统，可以自主决定何时检索、检索什么、如何使用检索结果。
+  first_seen: week_06
+
+- term_zh: Human-in-the-Loop
+  term_en: Human-in-the-Loop
+  definition_zh: 人工介入的 AI 系统设计，在关键决策点引入人工审核或确认。
+  first_seen: week_06
+
+- term_zh: AutoGen
+  term_en: AutoGen
+  definition_zh: 微软开发的多智能体框架，支持 Agent 之间的对话式协作。
+  first_seen: week_06
+
+- term_zh: Agent 协作模式
+  term_en: Agent Collaboration Pattern
+  definition_zh: 多个 Agent 协作的方式，常见的有顺序执行、并行执行、层级调度。
+  first_seen: week_06
+
+- term_zh: 规划者-执行者模式
+  term_en: Planner-Executor Pattern
+  definition_zh: 一种常见的多 Agent 架构，规划者负责任务分解，执行者负责具体执行。
+  first_seen: week_06
+
+- term_zh: Agent 通信
+  term_en: Agent Communication
+  definition_zh: 多 Agent 系统中 Agent 之间交换信息的机制，包括消息传递和共享状态。
+  first_seen: week_06
+
+- term_zh: 检索策略
+  term_en: Retrieval Strategy
+  definition_zh: Agentic RAG 中 Agent 选择如何检索的方式，如向量检索、关键词检索、混合检索。
+  first_seen: week_06

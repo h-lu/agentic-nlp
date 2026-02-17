@@ -1,0 +1,47 @@
+# Week 06 锚点表
+# 约定：id 周内唯一，claim/evidence/verification 齐全
+
+- id: multi_agent_necessity
+  claim: 单 Agent 面对复杂任务时存在认知负荷超载问题，多 Agent 协作是解决方案。
+  evidence: CHAPTER.md 第 1 节，单 Agent 需要"理解需求、分解任务、选择工具、执行操作、评估结果、迭代改进"全流程。
+  verification: examples/01_planner_executor.py 中的 AllInOneAgent 和 PlannerAgent 对比示例。
+
+- id: planner_executor_architecture
+  claim: 规划者-执行者模式是常用的多 Agent 架构，规划者负责任务分解，执行者负责具体执行。
+  evidence: CHAPTER.md 第 2 节，PlannerAgent 和 ExecutorAgent 的职责分离。
+  verification: examples/01_planner_executor.py 中的 PlannerAgent 和 ExecutorAgent 类实现。
+
+- id: agent_communication_patterns
+  claim: Agent 间通信主要有两种模式：消息传递（点对点或广播）和共享状态（读写公共存储）。
+  evidence: CHAPTER.md 第 2 节，MessageBus 和 SharedState 的设计模式。
+  verification: examples/02_agent_communication.py 中的 MessageBus 和 SharedState 类实现。
+
+- id: agentic_rag_difference
+  claim: Agentic RAG 与传统 RAG 的核心区别是 Agent 自主控制检索过程。
+  evidence: CHAPTER.md 第 3 节，传统 RAG 是被动检索，Agentic RAG 是主动决策。
+  verification: examples/03_agentic_rag.py 中的 RetrieverAgent 类，展示动态策略选择。
+
+- id: retrieval_strategy_selection
+  claim: Agentic RAG 中的 RetrieverAgent 可以根据查询特征动态选择检索策略。
+  evidence: CHAPTER.md 第 3 节，向量检索、关键词检索、混合检索的选择逻辑。
+  verification: examples/03_agentic_rag.py 中的 _decide_strategy() 方法。
+
+- id: human_in_loop_necessity
+  claim: 多 Agent 系统中错误会传播，Human-in-the-Loop 在关键决策点可以防止系统性错误。
+  evidence: CHAPTER.md 第 4 节，"错误会在多 Agent 系统中传播"的概念。
+  verification: examples/04_human_in_loop.py 中的审批流程示例。
+
+- id: hitl_decision_points
+  claim: Human-in-the-Loop 应该在三个关键决策点介入：计划审核、执行监控、结果确认。
+  evidence: CHAPTER.md 第 4 节，三个审批门的设计。
+  verification: examples/04_human_in_loop.py 中的 HumanApprovalGate 类。
+
+- id: multi_agent_cost_tradeoff
+  claim: 多 Agent 系统提高了复杂任务的完成质量，但也增加了延迟和成本。
+  evidence: CHAPTER.md AI 小专栏 #2，成本权衡的讨论。
+  verification: 无代码验证，需要实测对比。
+
+- id: framework_vs_native
+  claim: 简单的多 Agent 场景可以用原生 Function Calling 实现，复杂场景才需要框架。
+  evidence: CHAPTER.md AI 小专栏 #1，"从简单开始，按需升级"的实践建议。
+  verification: examples/01_planner_executor.py 展示原生实现。
