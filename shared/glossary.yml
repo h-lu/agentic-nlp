@@ -112,22 +112,77 @@
 # ─── Week 04 ───
 - term_zh: 混合检索
   term_en: Hybrid Search
-  definition_zh: 结合向量检索（语义相似）和关键词检索（精确匹配）的检索策略。
+  definition_zh: 结合向量检索（语义相似）和关键词检索（BM25 精确匹配）的检索策略，通过 RRF 等算法融合结果。
+  first_seen: week_04
+
+- term_zh: BM25
+  term_en: BM25 (Best Matching 25)
+  definition_zh: 经典的关键词检索算法，基于词频（TF）和逆文档频率（IDF）计算文档相关性分数，擅长精确匹配。
+  first_seen: week_04
+
+- term_zh: RRF
+  term_en: Reciprocal Rank Fusion
+  definition_zh: 倒数排名融合算法，用于合并多个检索系统的结果。公式：score = Σ(1 / (k + rank))，k 通常取 60。
   first_seen: week_04
 
 - term_zh: 重排序
   term_en: Re-ranking
-  definition_zh: 对检索结果进行二次排序的技术，使用更精确的模型（如 Cross-Encoder）提升相关性。
+  definition_zh: 对检索结果进行二次排序的技术，使用更精确但更慢的模型（如 Cross-Encoder）提升 Top-K 结果的相关性。
+  first_seen: week_04
+
+- term_zh: Cross-Encoder
+  term_en: Cross-Encoder
+  definition_zh: 一种同时编码查询和文档的模型架构，能精确计算相关性但计算成本高，适合对少量候选文档进行重排序。
+  first_seen: week_04
+
+- term_zh: Bi-Encoder
+  term_en: Bi-Encoder
+  definition_zh: 一种分别编码查询和文档的模型架构，生成向量后计算相似度，速度快但精度略低，适合大规模检索。
   first_seen: week_04
 
 - term_zh: 查询重写
   term_en: Query Rewriting
-  definition_zh: 使用 LLM 改写用户查询，使其更适合检索的技术。
+  definition_zh: 使用 LLM 改写用户查询，使其更适合检索的技术，包括查询扩展、查询简化、同义词替换等。
+  first_seen: week_04
+
+- term_zh: 查询扩展
+  term_en: Query Expansion
+  definition_zh: 将单个用户查询扩展为多个语义相关的变体，以覆盖更多可能的相关文档。
   first_seen: week_04
 
 - term_zh: RAGAS
-  term_en: RAGAS
-  definition_zh: RAG 评估框架，提供忠实度、答案相关性、上下文精确度等指标。
+  term_en: RAGAS (Retrieval Augmented Generation Assessment)
+  definition_zh: RAG 评估框架，提供忠实度（faithfulness）、答案相关性（answer relevancy）、上下文精确度（context precision）等指标。
+  first_seen: week_04
+
+- term_zh: 忠实度
+  term_en: Faithfulness
+  definition_zh: RAGAS 指标之一，衡量 LLM 生成的答案是否完全基于检索到的上下文，而非编造信息。
+  first_seen: week_04
+
+- term_zh: 答案相关性
+  term_en: Answer Relevancy
+  definition_zh: RAGAS 指标之一，衡量答案与用户问题的相关程度，通过反向生成问题来评估。
+  first_seen: week_04
+
+- term_zh: 上下文精确度
+  term_en: Context Precision
+  definition_zh: RAGAS 指标之一，衡量检索到的上下文中有多少内容与问题相关，反映检索质量。
+  first_seen: week_04
+
+- term_zh: Recall@K
+  term_en: Recall@K
+  definition_zh: 检索评估指标，衡量前 K 个检索结果中包含了多少个相关文档。
+  first_seen: week_04
+
+- term_zh: MRR
+  term_en: Mean Reciprocal Rank
+  definition_zh: 检索评估指标，衡量第一个相关文档在结果列表中的平均排名位置。
+  first_seen: week_04
+
+- term_zh: NDCG
+  term_en: Normalized Discounted Cumulative Gain
+  definition_zh: 检索评估指标，综合考虑相关文档的排名位置和相关程度，是更全面的检索质量度量。
   first_seen: week_04
 
 # ─── Week 05 ───

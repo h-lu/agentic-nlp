@@ -1,0 +1,69 @@
+# Week 04 锚点声明
+#
+# 每个锚点定义一个可通过测试验证的核心结论。
+# claim: 要验证的声明
+# evidence: 支持声明的证据类型
+# verification: 验证方法（测试文件/脚本）
+
+# ─── 混合检索 ───
+
+- id: hybrid-search-recall-boost
+  claim: 混合检索（向量 + BM25 + RRF）比纯向量检索的召回率提升 20% 以上
+  evidence: 在 50 个测试查询上的召回率对比实验
+  verification: tests/test_hybrid_search.py::test_hybrid_recall_improvement
+
+- id: bm25-precision-match
+  claim: BM25 能精确匹配年份、产品型号等关键词，而向量检索容易混淆
+  evidence: 使用包含"2024"/"2023"的查询对比测试
+  verification: tests/test_hybrid_search.py::test_bm25_precision_match
+
+- id: rrf-fusion-effectiveness
+  claim: RRF 融合算法能有效合并向量和 BM25 检索结果，综合 F1 分数提升 15%+
+  evidence: 不同融合策略的对比实验
+  verification: tests/test_hybrid_search.py::test_rrf_fusion
+
+# ─── 重排序 ───
+
+- id: rerank-precision-boost
+  claim: Cross-Encoder 重排序后，Top-3 结果的精确度提升 30% 以上
+  evidence: 在 100 个查询上的 Top-3 准确率对比
+  verification: tests/test_reranking.py::test_rerank_precision
+
+- id: rerank-latency-tradeoff
+  claim: 重排序增加约 50-100ms 延迟，但能换取 30%+ 的准确率提升
+  evidence: 延迟和准确率的权衡分析
+  verification: tests/test_reranking.py::test_rerank_latency
+
+- id: cross-encoder-vs-bi-encoder
+  claim: Cross-Encoder 比 Bi-Encoder 更精确但更慢，适合对 Top-K 结果进行精排
+  evidence: 两种模型的准确率和延迟对比
+  verification: tests/test_reranking.py::test_encoder_comparison
+
+# ─── 查询重写 ───
+
+- id: query-rewrite-recall-boost
+  claim: 查询重写能提升召回率 10-20%，特别是对于模糊或不完整的用户查询
+  evidence: 原始查询 vs 重写查询的召回率对比
+  verification: tests/test_query_rewriting.py::test_rewrite_recall
+
+- id: query-expansion-diversity
+  claim: 查询扩展（生成多个变体）能覆盖更多相关文档，召回率提升 15%+
+  evidence: 单查询 vs 扩展查询的召回对比
+  verification: tests/test_query_rewriting.py::test_expansion_diversity
+
+# ─── RAGAS 评估 ───
+
+- id: ragas-faithfulness-target
+  claim: 使用 RAGAS 评估，优化后的 RAG 系统忠实度（faithfulness）应 > 0.8
+  evidence: RAGAS 四项指标的评估结果
+  verification: tests/test_ragas_evaluation.py::test_faithfulness
+
+- id: ragas-ab-test
+  claim: A/B 测试能量化不同配置的效果差异，至少测试 3 个配置
+  evidence: A/B 测试报告（混合检索 vs 向量检索 vs 混合+重排序）
+  verification: tests/test_ragas_evaluation.py::test_ab_comparison
+
+- id: ragas-context-precision
+  claim: 上下文精确度（context_precision）衡量检索质量，优化后应 > 0.75
+  evidence: 检索结果的相关性评估
+  verification: tests/test_ragas_evaluation.py::test_context_precision
