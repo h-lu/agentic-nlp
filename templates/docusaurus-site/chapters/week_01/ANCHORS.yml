@@ -1,0 +1,5 @@
+- id: w01-anchor-001
+  claim: Java 程序需要一个 main 方法作为入口点
+  evidence: 所有可执行的 Java 程序都必须包含 public static void main(String[] args) 方法
+  verification: 尝试运行没有 main 方法的类会报错
+  status: verified

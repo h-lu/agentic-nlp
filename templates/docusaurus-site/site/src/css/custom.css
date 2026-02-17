@@ -1,0 +1,921 @@
+/**
+ * Java 软件工程课程站点 - 现代简洁设计
+ * 设计系统: Minimalism & Swiss Style
+ * 字体: Inter
+ * 配色: Blue primary, clean background, high contrast
+ */
+
+/* ============================================
+   字体导入 - Inter (Google Fonts)
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ============================================
+   CSS 变量定义
+   ============================================ */
+
+:root {
+  /* 主色调 - 蓝色 */
+  --ifm-color-primary: #3B82F6;
+  --ifm-color-primary-dark: #2563EB;
+  --ifm-color-primary-darker: #1D4ED8;
+  --ifm-color-primary-darkest: #1E40AF;
+  --ifm-color-primary-light: #60A5FA;
+  --ifm-color-primary-lighter: #93C5FD;
+  --ifm-color-primary-lightest: #DBEAFE;
+
+  /* CTA 颜色 */
+  --ifm-color-success: #22C55E;
+  --ifm-color-success-dark: #16A34A;
+
+  /* 背景色 - 简洁明亮 */
+  --ifm-background-color: #FFFFFF;
+  --ifm-background-surface-color: #F8FAFC;
+
+  /* 文字颜色 - 高对比度 */
+  --ifm-font-color-base: #1E293B;
+  --ifm-font-color-secondary: #64748B;
+  --ifm-font-color-muted: #94A3B8;
+
+  /* 字体 */
+  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ifm-font-family-monospace: 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
+
+  /* 代码高亮 */
+  --ifm-code-font-size: 92%;
+  --docusaurus-highlighted-code-line-bg: rgba(59, 130, 246, 0.1);
+
+  /* 间距 */
+  --ifm-spacing-horizontal: 1.5rem;
+  --ifm-spacing-vertical: 1.5rem;
+
+  /* 圆角 - 现代简洁 */
+  --ifm-global-radius: 8px;
+  --ifm-card-border-radius: 12px;
+
+  /* 阴影 - 轻微 */
+  --ifm-global-shadow-lw: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --ifm-global-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --ifm-global-shadow-tl: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* 链接 */
+  --ifm-link-color: var(--ifm-color-primary);
+  --ifm-link-hover-color: var(--ifm-color-primary-dark);
+
+  /* 导航栏 */
+  --ifm-navbar-height: 64px;
+  --ifm-navbar-background-color: rgba(255, 255, 255, 0.95);
+  --ifm-navbar-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+
+  /* 侧边栏 */
+  --ifm-menu-color: var(--ifm-font-color-base);
+  --ifm-menu-color-active: var(--ifm-color-primary);
+  --ifm-menu-color-background-active: rgba(59, 130, 246, 0.08);
+
+  /* 边框 */
+  --ifm-toc-border-color: #E2E8F0;
+
+  /* 过渡 */
+  --custom-transition: all 0.2s ease;
+}
+
+/* ============================================
+   暗色模式
+   ============================================ */
+
+[data-theme='dark'] {
+  --ifm-color-primary: #60A5FA;
+  --ifm-color-primary-dark: #3B82F6;
+  --ifm-color-primary-darker: #2563EB;
+  --ifm-color-primary-light: #93C5FD;
+  --ifm-color-primary-lighter: #BFDBFE;
+
+  --ifm-background-color: #0F172A;
+  --ifm-background-surface-color: #1E293B;
+
+  --ifm-font-color-base: #F1F5F9;
+  --ifm-font-color-secondary: #94A3B8;
+  --ifm-font-color-muted: #64748B;
+
+  --ifm-navbar-background-color: rgba(15, 23, 42, 0.95);
+  --ifm-navbar-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  --ifm-toc-border-color: #334155;
+
+  --docusaurus-highlighted-code-line-bg: rgba(96, 165, 250, 0.15);
+}
+
+/* ============================================
+   全局样式
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* ============================================
+   导航栏样式
+   注意：不要在 .navbar 上使用 backdrop-filter
+   它会创建新的堆叠上下文，导致移动端侧边栏无法显示
+   ============================================ */
+
+.navbar {
+  border-bottom: var(--ifm-navbar-shadow);
+  padding: 0 1.5rem;
+}
+
+.navbar__brand {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: var(--ifm-font-color-base);
+}
+
+.navbar__logo {
+  height: 32px;
+  margin-right: 0.75rem;
+}
+
+.navbar__item {
+  font-weight: 500;
+  font-size: 0.9375rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 6px;
+  transition: var(--custom-transition);
+  cursor: pointer;
+  color: var(--ifm-font-color-base);
+}
+
+.navbar__item:hover {
+  background-color: var(--ifm-menu-color-background-active);
+  color: var(--ifm-color-primary);
+}
+
+.navbar__item--active {
+  color: var(--ifm-color-primary);
+}
+
+/* ============================================
+   移动端导航 - 汉堡菜单
+   ============================================ */
+
+/* 汉堡菜单按钮 - 确保触摸目标足够大 */
+.navbar__toggle {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: var(--custom-transition);
+  cursor: pointer;
+}
+
+.navbar__toggle:hover {
+  background-color: var(--ifm-menu-color-background-active);
+}
+
+/* ============================================
+   移动端导航侧边栏
+   不要添加 transform/position 等属性，
+   只设置背景色和触摸优化
+   ============================================ */
+
+/* 移动端侧边栏背景 */
+.navbar-sidebar {
+  background-color: var(--ifm-background-color);
+}
+
+/* 暗色模式侧边栏 */
+[data-theme='dark'] .navbar-sidebar {
+  background-color: var(--ifm-background-color);
+}
+
+/* 移动端侧边栏品牌区域 */
+.navbar-sidebar__brand {
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+  padding: 1rem;
+}
+
+/* 移动端侧边栏内容 */
+.navbar-sidebar__items {
+  padding: 1rem;
+}
+
+.navbar-sidebar__item {
+  padding: 0.5rem 0;
+}
+
+/* 移动端侧边栏菜单链接 - 触摸优化 */
+.navbar-sidebar .menu__link {
+  padding: 0.875rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  transition: var(--custom-transition);
+  cursor: pointer;
+  color: var(--ifm-font-color-base);
+}
+
+.navbar-sidebar .menu__link:hover,
+.navbar-sidebar .menu__link--active {
+  background-color: var(--ifm-menu-color-background-active);
+  color: var(--ifm-color-primary);
+}
+
+/* 暗色模式菜单链接 */
+[data-theme='dark'] .navbar-sidebar .menu__link {
+  color: var(--ifm-font-color-base);
+}
+
+/* 移动端侧边栏关闭按钮 */
+.navbar-sidebar__close {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--custom-transition);
+}
+
+.navbar-sidebar__close:hover {
+  background-color: var(--ifm-menu-color-background-active);
+}
+
+/* 移动端侧边栏 */
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--ifm-toc-border-color);
+}
+
+/* 移动端侧边栏菜单 */
+@media (max-width: 996px) {
+  .theme-doc-sidebar-container {
+    border-right: none;
+  }
+
+  /* 移动端菜单面板 */
+  .menu {
+    padding: 1rem 0.5rem;
+    background-color: var(--ifm-background-color);
+  }
+
+  /* 移动端菜单链接 - 增大触摸区域 */
+  .menu__link {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    transition: var(--custom-transition);
+    cursor: pointer;
+  }
+
+  .menu__link:hover {
+    background-color: var(--ifm-menu-color-background-active);
+  }
+
+  /* 移动端分类展开按钮 */
+  .menu__list-item-collapsible {
+    border-radius: 8px;
+  }
+
+  .menu__caret {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  /* 导航栏在移动端 */
+  .navbar {
+    padding: 0 1rem;
+  }
+
+  .navbar__items {
+    gap: 0.25rem;
+  }
+
+  /* 移动端右侧按钮组 */
+  .navbar__items--right {
+    gap: 0.5rem;
+  }
+
+  /* 搜索按钮移动端样式 */
+  .navbar__search {
+    padding: 0.5rem;
+  }
+}
+
+/* ============================================
+   侧边栏样式 (桌面端)
+   ============================================ */
+
+.theme-doc-sidebar-menu {
+  padding: 1rem 0.5rem;
+}
+
+.theme-doc-sidebar-menu .menu__link {
+  border-radius: 8px;
+  padding: 0.625rem 1rem;
+  font-weight: 500;
+  transition: var(--custom-transition);
+  cursor: pointer;
+}
+
+.theme-doc-sidebar-menu .menu__link:hover {
+  background-color: var(--ifm-menu-color-background-active);
+}
+
+.theme-doc-sidebar-menu .menu__link--active {
+  background-color: var(--ifm-menu-color-background-active);
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+/* 侧边栏分类标题 */
+.menu__list-item-collapsible .menu__link {
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+}
+
+/* 展开箭头 - 确保可点击 */
+.menu__caret {
+  cursor: pointer;
+  transition: var(--custom-transition);
+}
+
+/* ============================================
+   内容区域
+   ============================================ */
+
+.theme-doc-markdown {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* 标题样式 */
+.markdown h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--ifm-font-color-base);
+  line-height: 1.3;
+}
+
+.markdown h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--ifm-color-primary);
+  display: inline-block;
+}
+
+.markdown h3 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.875rem;
+}
+
+.markdown h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* 段落 */
+.markdown p {
+  line-height: 1.75;
+  margin-bottom: 1.25rem;
+  color: var(--ifm-font-color-base);
+}
+
+/* 链接 */
+.markdown a {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--custom-transition);
+}
+
+.markdown a:hover {
+  color: var(--ifm-color-primary-dark);
+  text-decoration: underline;
+}
+
+/* 列表 */
+.markdown ul,
+.markdown ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.markdown li {
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+}
+
+.markdown li::marker {
+  color: var(--ifm-color-primary);
+}
+
+/* ============================================
+   代码块
+   ============================================ */
+
+.theme-code-block {
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-global-shadow-lw);
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+
+.theme-code-block pre {
+  margin: 0;
+  padding: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+/* 行内代码 */
+code {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.875em;
+  color: var(--ifm-color-primary);
+}
+
+[data-theme='dark'] code {
+  background-color: rgba(96, 165, 250, 0.15);
+  color: var(--ifm-color-primary-light);
+}
+
+/* 代码高亮行 */
+.docusaurus-highlight-code-line {
+  background-color: var(--docusaurus-highlighted-code-line-bg);
+  display: block;
+  margin: 0 -1.25rem;
+  padding: 0 1.25rem;
+}
+
+/* ============================================
+   表格
+   ============================================ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  border-radius: var(--ifm-card-border-radius);
+  overflow: hidden;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+th {
+  background-color: var(--ifm-color-primary);
+  color: white;
+  font-weight: 600;
+  padding: 0.875rem 1rem;
+  text-align: left;
+}
+
+td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:nth-child(even) {
+  background-color: var(--ifm-background-surface-color);
+}
+
+/* ============================================
+   引用块
+   ============================================ */
+
+blockquote {
+  border-left: 4px solid var(--ifm-color-primary);
+  background-color: var(--ifm-background-surface-color);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0 8px 8px 0;
+  color: var(--ifm-font-color-secondary);
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   提示框 (Admonitions)
+   ============================================ */
+
+.alert {
+  border-radius: var(--ifm-card-border-radius);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border: none;
+  border-left: 4px solid var(--ifm-color-primary);
+}
+
+.alert--primary {
+  background-color: rgba(59, 130, 246, 0.08);
+  border-left-color: var(--ifm-color-primary);
+}
+
+.alert--success {
+  background-color: rgba(34, 197, 94, 0.08);
+  border-left-color: #22C55E;
+}
+
+.alert--warning {
+  background-color: rgba(245, 158, 11, 0.08);
+  border-left-color: #F59E0B;
+}
+
+.alert--danger {
+  background-color: rgba(239, 68, 68, 0.08);
+  border-left-color: #EF4444;
+}
+
+.alert--info {
+  background-color: rgba(59, 130, 246, 0.08);
+  border-left-color: var(--ifm-color-primary);
+}
+
+/* ============================================
+   目录
+   ============================================ */
+
+.table-of-contents {
+  padding: 1rem;
+  border-radius: var(--ifm-card-border-radius);
+  background-color: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-toc-border-color);
+}
+
+.table-of-contents__link {
+  border-radius: 6px;
+  padding: 0.375rem 0.75rem;
+  transition: var(--custom-transition);
+  display: block;
+}
+
+.table-of-contents__link:hover {
+  background-color: var(--ifm-menu-color-background-active);
+  color: var(--ifm-color-primary);
+}
+
+.table-of-contents__link--active {
+  background-color: var(--ifm-menu-color-background-active);
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+/* ============================================
+   页脚
+   ============================================ */
+
+.footer {
+  background-color: var(--ifm-background-surface-color);
+  padding: 2.5rem 2rem;
+  border-top: 1px solid var(--ifm-toc-border-color);
+}
+
+.footer__title {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  margin-bottom: 0.875rem;
+  color: var(--ifm-font-color-base);
+}
+
+.footer__link-item {
+  color: var(--ifm-font-color-secondary);
+  transition: var(--custom-transition);
+  cursor: pointer;
+  padding: 0.25rem 0;
+  display: inline-block;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-color-primary);
+}
+
+.footer__copyright {
+  text-align: center;
+  color: var(--ifm-font-color-muted);
+  font-size: 0.875rem;
+  margin-top: 1.5rem;
+}
+
+/* ============================================
+   首页 Hero
+   ============================================ */
+
+.hero {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.hero__title {
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.hero__subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+
+/* ============================================
+   按钮
+   ============================================ */
+
+.button {
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  transition: var(--custom-transition);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+.button--primary {
+  background-color: #22C55E;
+  color: white;
+}
+
+.button--primary:hover {
+  background-color: #16A34A;
+  transform: translateY(-1px);
+}
+
+.button--secondary {
+  background-color: transparent;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.button--secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: white;
+}
+
+/* ============================================
+   卡片
+   ============================================ */
+
+.card {
+  background-color: var(--ifm-background-color);
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: var(--ifm-card-border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--ifm-global-shadow-lw);
+  transition: var(--custom-transition);
+}
+
+.card:hover {
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+/* ============================================
+   搜索框
+   ============================================ */
+
+.navbar__search-input {
+  border-radius: 8px;
+  border: 1px solid var(--ifm-toc-border-color);
+  padding: 0.5rem 1rem;
+  transition: var(--custom-transition);
+  background-color: var(--ifm-background-surface-color);
+}
+
+.navbar__search-input:focus {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
+}
+
+/* ============================================
+   响应式设计 - 移动端优化
+   ============================================ */
+
+@media (max-width: 996px) {
+  :root {
+    --ifm-spacing-horizontal: 1rem;
+  }
+
+  .hero {
+    padding: 3rem 1.5rem;
+  }
+
+  .hero__title {
+    font-size: 2rem;
+  }
+
+  .hero__subtitle {
+    font-size: 1.125rem;
+  }
+
+  .markdown h1 {
+    font-size: 1.875rem;
+  }
+
+  .markdown h2 {
+    font-size: 1.5rem;
+  }
+
+  .markdown h3 {
+    font-size: 1.25rem;
+  }
+
+  .theme-doc-markdown {
+    padding: 0 1rem;
+  }
+
+  /* 移动端表格横向滚动 */
+  .markdown table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 移动端代码块 */
+  .theme-code-block pre {
+    font-size: 0.8125rem;
+    padding: 1rem;
+  }
+
+  /* 移动端页脚 */
+  .footer {
+    padding: 2rem 1rem;
+  }
+
+  .footer__links {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 2.5rem 1rem;
+  }
+
+  .hero__title {
+    font-size: 1.75rem;
+  }
+
+  .hero__subtitle {
+    font-size: 1rem;
+  }
+
+  .hero__buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .button {
+    width: 100%;
+  }
+
+  .markdown h1 {
+    font-size: 1.625rem;
+  }
+
+  .markdown h2 {
+    font-size: 1.375rem;
+  }
+}
+
+/* ============================================
+   可访问性 - 减少动画
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   焦点状态 - 键盘导航
+   ============================================ */
+
+:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.navbar__link:focus-visible,
+.menu__link:focus-visible,
+.button:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   滚动条
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ifm-background-surface-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ifm-color-primary-lighter);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ifm-color-primary);
+}
+
+/* ============================================
+   文本选择
+   ============================================ */
+
+::selection {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: inherit;
+}
+
+[data-theme='dark'] ::selection {
+  background-color: rgba(96, 165, 250, 0.3);
+}
+
+/* ============================================
+   面包屑导航
+   ============================================ */
+
+.breadcrumbs {
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+}
+
+.breadcrumbs__item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.breadcrumbs__link {
+  color: var(--ifm-font-color-secondary);
+  transition: var(--custom-transition);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.breadcrumbs__link:hover {
+  color: var(--ifm-color-primary);
+  background-color: var(--ifm-menu-color-background-active);
+}
+
+.breadcrumbs__item--active .breadcrumbs__link {
+  color: var(--ifm-font-color-base);
+  font-weight: 500;
+}

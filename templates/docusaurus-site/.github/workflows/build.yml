@@ -1,0 +1,121 @@
+# =============================================================================
+# GitHub Actions Workflow - Build Site
+# =============================================================================
+# This workflow builds the site to verify it compiles correctly.
+# It does NOT deploy automatically. For manual deployment:
+#   1. Run: make build
+#   2. Upload site/build/ directory to your hosting service (Netlify, Vercel, etc.)
+#
+# To enable automatic deployment, uncomment the deploy job section.
+# =============================================================================
+
+name: Build Site
+
+on:
+  # Trigger on push to main branch
+  push:
+    branches:
+      - main
+    paths:
+      - 'site/**'
+      - 'scripts/**'
+      - 'chapters/**'
+      - 'shared/**'
+      - '.github/workflows/build.yml'
+
+  # Trigger on pull requests
+  pull_request:
+    paths:
+      - 'site/**'
+      - 'scripts/**'
+      - 'chapters/**'
+      - 'shared/**'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  # Build job only - no deployment
+  build:
+    name: Build Site
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: site/package-lock.json
+
+      # Step 3: Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # Step 4: Install dependencies
+      - name: Install Dependencies
+        working-directory: ./site
+        run: |
+          echo "Installing npm dependencies..."
+          npm ci
+          echo "Dependencies installed successfully"
+
+      # Step 5: Run Python build script (generate MDX files)
+      - name: Generate Documentation
+        run: |
+          echo "Running documentation generation script..."
+          python scripts/build_site.py --verbose
+          echo "Documentation generation completed"
+
+      # Step 6: Build Docusaurus site (static files)
+      - name: Build Site
+        working-directory: ./site
+        run: |
+          echo "Building Docusaurus site..."
+          npm run build
+          echo "Build completed successfully"
+
+      # Step 7: Upload build artifact (for manual download)
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-build
+          path: ./site/build
+          retention-days: 7
+
+  # =============================================================================
+  # Optional: Uncomment below to enable automatic deployment to GitHub Pages
+  # =============================================================================
+  # deploy:
+  #   name: Deploy to GitHub Pages
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main'
+  #   permissions:
+  #     contents: read
+  #     pages: write
+  #     id-token: write
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   steps:
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: site-build
+  #         path: ./site/build
+  #     - name: Setup Pages
+  #       uses: actions/configure-pages@v4
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4

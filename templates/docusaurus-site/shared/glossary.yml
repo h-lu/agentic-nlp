@@ -1,0 +1,17 @@
+# 全局术语表
+# 这里定义整个课程通用的术语
+
+compile:
+  chinese: 编译
+  english: Compile
+  definition: 将源代码转换为可执行代码的过程
+
+runtime:
+  chinese: 运行时
+  english: Runtime
+  definition: 程序执行期间的环境和状态
+
+debug:
+  chinese: 调试
+  english: Debug
+  definition: 查找和修复程序错误的过程

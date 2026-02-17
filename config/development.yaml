@@ -1,0 +1,58 @@
+agents:
+  executor:
+    enable_cache: true
+    llm:
+      api_key: sk-test-key
+      base_url: null
+      max_tokens: 2000
+      model: gpt-4o-mini
+      provider: openai
+      temperature: 0.5
+    name: executor
+    system_prompt: You are an executor agent.
+    timeout_seconds: 60
+  planner:
+    enable_cache: true
+    llm:
+      api_key: sk-test-key
+      base_url: null
+      max_tokens: 2000
+      model: gpt-4o-mini
+      provider: openai
+      temperature: 0.7
+    name: planner
+    system_prompt: You are a planning agent.
+    timeout_seconds: 30
+  retriever:
+    enable_cache: true
+    llm:
+      api_key: sk-test-key
+      base_url: null
+      max_tokens: 1000
+      model: gpt-4o-mini
+      provider: openai
+      temperature: 0.3
+    name: retriever
+    system_prompt: You are a retriever agent.
+    timeout_seconds: 30
+  reviewer:
+    enable_cache: false
+    llm:
+      api_key: sk-test-key
+      base_url: null
+      max_tokens: 1000
+      model: gpt-4o-mini
+      provider: openai
+      temperature: 0.2
+    name: reviewer
+    system_prompt: You are a reviewer agent.
+    timeout_seconds: 30
+observability:
+  enable_logging: true
+  enable_tracing: true
+  log_level: INFO
+  tracing_endpoint: https://api.langsmith.com
+retriever:
+  score_threshold: 0.7
+  top_k: 5
+  type: vector

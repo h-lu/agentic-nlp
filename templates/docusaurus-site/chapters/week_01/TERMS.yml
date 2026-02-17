@@ -1,0 +1,7 @@
+- chinese: 编译
+  english: Compile
+  definition: 将源代码转换为机器可执行代码的过程
+
+- chinese: 运行
+  english: Run
+  definition: 执行编译后的程序

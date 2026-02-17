@@ -1,0 +1,18 @@
+# Netlify 部署配置
+# 文档: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # 构建命令
+  command = "pip install pyyaml && cd templates/docusaurus-site && make install build"
+
+  # 输出目录（相对于项目根目录）
+  publish = "dist"
+
+  # Node.js 版本
+  environment = { NODE_VERSION = "20" }
+
+# 重定向规则（SPA 支持）
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
