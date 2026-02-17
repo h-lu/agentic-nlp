@@ -1,0 +1,207 @@
+# 全书概念图谱
+#
+# 记录每个核心概念的首次引入周和计划复现周（回顾桥目标）。
+# syllabus-planner 规划时检查新概念数是否超预算。
+# chapter-writer 写回顾桥时参考本文件。
+# validate_week.py 用本文件做自动检查。
+#
+# 字段说明：
+#   concept_zh: 中文概念名
+#   concept_en: 英文概念名（可选）
+#   introduced: 首次引入的周（week_XX）
+#   revisited:  计划复现的周列表（回顾桥目标，不要求全部命中，但应覆盖大半）
+#   bloom_level: 首次引入时的 Bloom 层次（remember/understand/apply/analyze/evaluate/create）
+
+# ─── Week 01 ───
+- concept_zh: LLM 范式转变
+  concept_en: Paradigm Shift to LLM
+  introduced: week_01
+  revisited: [week_02, week_07]
+  bloom_level: understand
+
+- concept_zh: LLM API 调用
+  concept_en: LLM API Integration
+  introduced: week_01
+  revisited: [week_02, week_03, week_05]
+  bloom_level: apply
+
+- concept_zh: Token 与成本
+  concept_en: Token and Cost
+  introduced: week_01
+  revisited: [week_02, week_07]
+  bloom_level: apply
+
+- concept_zh: 结构化输出
+  concept_en: Structured Output
+  introduced: week_01
+  revisited: [week_02, week_05]
+  bloom_level: apply
+
+# ─── Week 02 ───
+- concept_zh: Prompt 设计原则
+  concept_en: Prompt Design Principles
+  introduced: week_02
+  revisited: [week_03, week_05, week_07]
+  bloom_level: apply
+
+- concept_zh: Few-shot Learning
+  concept_en: Few-shot Learning
+  introduced: week_02
+  revisited: [week_03, week_05]
+  bloom_level: apply
+
+- concept_zh: Chain-of-Thought
+  concept_en: Chain-of-Thought
+  introduced: week_02
+  revisited: [week_05, week_06]
+  bloom_level: apply
+
+- concept_zh: Prompt 评估
+  concept_en: Prompt Evaluation
+  introduced: week_02
+  revisited: [week_04, week_07]
+  bloom_level: evaluate
+
+# ─── Week 03 ───
+- concept_zh: RAG 架构
+  concept_en: RAG Architecture
+  introduced: week_03
+  revisited: [week_04, week_06, week_08]
+  bloom_level: understand
+
+- concept_zh: Embedding 与向量检索
+  concept_en: Embedding and Vector Search
+  introduced: week_03
+  revisited: [week_04, week_07]
+  bloom_level: apply
+
+- concept_zh: 文本切分策略
+  concept_en: Text Chunking Strategies
+  introduced: week_03
+  revisited: [week_04]
+  bloom_level: apply
+
+- concept_zh: 向量数据库
+  concept_en: Vector Database
+  introduced: week_03
+  revisited: [week_04, week_07]
+  bloom_level: apply
+
+# ─── Week 04 ───
+- concept_zh: 混合检索
+  concept_en: Hybrid Search
+  introduced: week_04
+  revisited: [week_06, week_08]
+  bloom_level: apply
+
+- concept_zh: 重排序
+  concept_en: Re-ranking
+  introduced: week_04
+  revisited: [week_06, week_08]
+  bloom_level: apply
+
+- concept_zh: RAG 评估
+  concept_en: RAG Evaluation
+  introduced: week_04
+  revisited: [week_07, week_08]
+  bloom_level: evaluate
+
+- concept_zh: 查询优化
+  concept_en: Query Optimization
+  introduced: week_04
+  revisited: [week_06]
+  bloom_level: apply
+
+# ─── Week 05 ───
+- concept_zh: Agent 架构
+  concept_en: Agent Architecture
+  introduced: week_05
+  revisited: [week_06, week_08]
+  bloom_level: understand
+
+- concept_zh: Function Calling
+  concept_en: Function Calling
+  introduced: week_05
+  revisited: [week_06, week_08]
+  bloom_level: apply
+
+- concept_zh: ReAct 模式
+  concept_en: ReAct Pattern
+  introduced: week_05
+  revisited: [week_06]
+  bloom_level: apply
+
+- concept_zh: 规划与任务分解
+  concept_en: Planning and Task Decomposition
+  introduced: week_05
+  revisited: [week_06]
+  bloom_level: apply
+
+# ─── Week 06 ───
+- concept_zh: 多智能体协作
+  concept_en: Multi-Agent Collaboration
+  introduced: week_06
+  revisited: [week_08]
+  bloom_level: apply
+
+- concept_zh: Agentic RAG
+  concept_en: Agentic RAG
+  introduced: week_06
+  revisited: [week_08]
+  bloom_level: apply
+
+- concept_zh: Human-in-the-Loop
+  concept_en: Human-in-the-Loop
+  introduced: week_06
+  revisited: [week_07, week_08]
+  bloom_level: evaluate
+
+- concept_zh: Agent 框架
+  concept_en: Agent Frameworks
+  introduced: week_06
+  revisited: [week_08]
+  bloom_level: apply
+
+# ─── Week 07 ───
+- concept_zh: LLM 应用评估
+  concept_en: LLM Application Evaluation
+  introduced: week_07
+  revisited: [week_08]
+  bloom_level: evaluate
+
+- concept_zh: 成本优化
+  concept_en: Cost Optimization
+  introduced: week_07
+  revisited: [week_08]
+  bloom_level: evaluate
+
+- concept_zh: 可观测性
+  concept_en: Observability
+  introduced: week_07
+  revisited: [week_08]
+  bloom_level: apply
+
+- concept_zh: 部署实践
+  concept_en: Deployment Practices
+  introduced: week_07
+  revisited: [week_08]
+  bloom_level: apply
+
+# ─── Week 08 ───
+- concept_zh: 端到端系统设计
+  concept_en: End-to-End System Design
+  introduced: week_08
+  revisited: []
+  bloom_level: create
+
+- concept_zh: 商业落地
+  concept_en: Business Deployment
+  introduced: week_08
+  revisited: []
+  bloom_level: evaluate
+
+- concept_zh: 迭代优化
+  concept_en: Iterative Optimization
+  introduced: week_08
+  revisited: []
+  bloom_level: evaluate
