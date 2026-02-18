@@ -326,37 +326,45 @@ Week 02 必须回顾 Week 01 的至少 2 个概念：
 
 同样的任务，这个 Prompt 更可能给你一个干净的"财经"两个字。
 
-### 常见的"模糊 Prompt"陷阱
+### 小北的"踩坑日记"：三个模糊 Prompt 的翻车现场
 
-有些写法看起来没问题，但实际有坑。小北就踩过：
+四要素框架听起来简单，但小北在实践里连踩了三个坑。
 
-```text
-小北的 Prompt："分析这条新闻"
-LLM 输出：一段情感分析 + 一段主题提取 + 一段关键词总结
-小北：？？？
+**第一个坑：动词不够具体**
+
+小北接到任务，要分析一批新闻。他写了个 Prompt："分析这条新闻"。结果 LLM 给他输出了一段情感分析 + 一段主题提取 + 一段关键词总结——整整三段话，而小北只想要一个类别名。
+
+"它怎么给我这么多？"小北把输出给老潘看。
+
+"你让它'分析'，它就分析给你看。"老潘笑了，"'分析'太宽泛了，LLM 可能做情感分析、主题分析、语法分析，甚至帮你数形容词。你得说清楚：'判断这条新闻属于哪个类别：财经、科技、体育、娱乐'。"
+
+**第二个坑：缺少边界约束**
+
+小北吸取教训，把 Prompt 改成："提取新闻中的公司名"。这次输出确实简洁多了——直到他遇到一条新闻里根本没有公司名。LLM 输出："我在文本中没有找到公司名称，但根据上下文推测可能涉及科技行业……"
+
+小北的解析代码直接崩了——它只期待一个公司名列表，不是一段解释。
+
+阿码刚好路过，看了一眼："这是边界条件。写代码的时候你要测 null、测空字符串，写 Prompt 的时候也要想——如果没找到怎么办？"
+
+"那我应该怎么写？"
+
+"加一句：'如果没有提到公司，输出"无"'。告诉 LLM 边界在哪。"
+
+**第三个坑：格式不明确**
+
+小北又改了一版："用 JSON 格式输出公司名"。这次 LLM 倒是输出 JSON 了——但它加了注释、换了行、字段名还是 `company_names` 而不是 `companies`。
+
+```json
+// 提取的公司列表
+{
+  "company_names": ["苹果公司"],  // 可能还有更多
+  "note": "文本中只提到了一家公司"
+}
 ```
 
-**陷阱 1：动词不够具体**
+小北的 JSON 解析器又崩了。
 
-"分析"太宽泛了——LLM 可能给你做情感分析、主题分析、语法分析，甚至帮你找出所有形容词。你得说清楚："判断这条新闻属于哪个类别：财经、科技、体育、娱乐"。
-
-**陷阱 2：缺少边界约束**
-
-```text
-❌ "提取新闻中的公司名"
-✅ "提取新闻中的公司名。如果没有提到公司，输出'无'"
-```
-
-不告诉 LLM "没有怎么办"，它可能会编一个，或者输出"我没有找到公司"这种你无法程序化处理的文字。阿码会说："这是边界条件，写代码的时候要测，写 Prompt 的时候也要想。"
-
-**陷阱 3：格式不明确**
-
-```text
-❌ "用 JSON 格式输出"
-✅ "用 JSON 格式输出：{"companies": ["公司名1", "公司名2"]}"
-```
-
-"JSON 格式"还是太宽——LLM 可能加注释、换行、或者用你不期望的字段名。给出具体的 Schema，它才能精准命中。
+"JSON 格式"还是太宽——LLM 可能加注释、换行、用你不期望的字段名。老潘拍拍他的肩膀："给它一个具体的 Schema：`{"companies": ["公司名1", "公司名2"]}`。精确到字段名，它才能精准命中。"
 
 上周我们用 JSON Mode 保证输出是合法的 JSON，这周我们从 Prompt 层面进一步约束——告诉 LLM 具体的字段名、类型、嵌套结构。两者配合使用效果最好：JSON Mode 确保"语法正确"，Prompt 约束确保"内容正确"。
 
@@ -483,7 +491,7 @@ class FewShotManager:
         return "\n".join(lines)
 ```
 
-对应的 YAML 配置文件：
+对应的 YAML 配置文件（节选）：
 
 ```yaml
 # templates/classify_examples.yaml
@@ -491,19 +499,13 @@ classify:
   - input: "苹果公司发布新款 iPhone，搭载 A18 芯片"
     output: "科技"
     category: "科技"
-
-  - input: "中国男篮在亚运会决赛中战胜韩国队"
-    output: "体育"
-    category: "体育"
-
   - input: "央行宣布下调存款准备金率 0.5 个百分点"
     output: "财经"
     category: "财经"
-
-  - input: "某知名演员宣布结婚消息"
-    output: "娱乐"
-    category: "娱乐"
+  # ... 更多示例见完整配置
 ```
+
+完整的 YAML 文件包含所有四个类别的示例，并支持按 `category` 字段筛选。实际项目中，你可能有 20-50 个示例，覆盖各种边界情况。
 
 现在你有了稳定的输出格式。但有些任务不只是"分类"这么简单——它们需要"想一想"。下一节我们来聊聊 Chain-of-Thought。
 
@@ -628,6 +630,54 @@ Let's think step by step.
 
 你改了 Prompt，加了一些 Few-shot 示例，又尝试了 CoT。跑了十几条测试，感觉比之前好了。于是你准备提交代码，上线部署。
 
+### 用 Pydantic 定义数据结构
+
+在开始评估之前，我们需要一个可靠的方式来定义测试用例和评估结果。这周我们使用 **Pydantic** 来做这件事，而不是 Python 标准库的 `dataclasses`。
+
+为什么在 LLM 应用中更推荐 Pydantic？
+
+**LLM 的输出不可靠**——它可能说"置信度 0.95"，实际输出"0.95"（字符串）而不是 0.95（浮点数）。Pydantic 会在运行时自动做类型转换和验证，而 `dataclasses` 只是"类型提示"，运行时不会检查。
+
+```python
+from dataclasses import dataclass
+from pydantic import BaseModel, Field
+
+# dataclasses：类型只是"提示"，运行时不检查
+@dataclass
+class ResultDC:
+    accuracy: float  # 传入 "0.95"（字符串）不会报错，但后续计算可能出错
+
+# Pydantic：运行时会验证和转换
+class ResultPD(BaseModel):
+    accuracy: float = Field(ge=0, le=1)  # 传入 "0.95" 会自动转成 0.95
+                                         # 传入 1.5 会直接报错
+```
+
+Pydantic 还有两个在 LLM 应用中特别有用的能力：
+- **自动生成 JSON Schema**：可以传给 LLM 作为"格式说明书"
+- **与 OpenAI 等框架无缝集成**：OpenAI 的 structured outputs 直接支持 Pydantic 模型
+
+如果你之前没用过 Pydantic，不用担心——它的写法和 `dataclasses` 几乎一样，只是多了运行时验证。
+
+```python
+from pydantic import BaseModel, Field
+from typing import List, Optional
+
+class TestCase(BaseModel):
+    """测试用例"""
+    input: str
+    expected_output: str
+    metadata: Optional[dict] = None  # 可选的额外信息
+
+class EvalResult(BaseModel):
+    """评估结果"""
+    prompt_version: str
+    accuracy: float = Field(ge=0, le=1)  # 限制在 0-1 范围
+    format_compliance: float = Field(ge=0, le=1)
+```
+
+`Field(ge=0, le=1)` 的意思是：这个字段的值必须 `>= 0` 且 `<= 1`。如果你不小心传了 `1.5`，Pydantic 会直接报错——这比在生产环境里发现数据异常要安全得多。
+
 老潘拦住了你："你怎么知道变好了？"
 
 "感觉啊，之前经常输出乱七八糟的，现在都很整齐。"
@@ -652,26 +702,59 @@ Let's think step by step.
 
 **记录结果**：用表格或图表展示对比。下次老板问"为什么用这个 Prompt"，你能拿出数据说话。
 
+#### 简化版：30 行代码跑起来
+
+别被"评估框架"吓到，核心逻辑其实就是个循环加计数：
+
+```python
+# 最简版本：30 行代码就能跑
+test_cases = [
+    {"input": "苹果发布新 iPhone", "expected": "科技"},
+    {"input": "央行降准 0.5 个百分点", "expected": "财经"},
+    # ... 更多测试用例
+]
+
+def evaluate_simple(client, test_cases, build_prompt):
+    """最简评估：只算准确率"""
+    correct = 0
+    for case in test_cases:
+        prompt = build_prompt(case["input"])
+        response = client.call(prompt)
+        if response.strip() == case["expected"]:
+            correct += 1
+    return correct / len(test_cases)
+
+# 调用
+acc = evaluate_simple(client, test_cases, build_prompt_v1)
+print(f"准确率: {acc:.1%}")
+```
+
+这 30 行代码已经能帮你回答"改了 Prompt 效果有没有变好"这个问题。先跑起来，再逐步完善。
+
+#### 完整版：加上更多指标
+
+当你需要更细的指标（格式合规率、延迟、Token 消耗）时，可以升级到完整版：
+
 ```python
 # src/textagent/evaluation/prompt_eval.py
-from typing import List, Dict, Callable
-from dataclasses import dataclass
+from typing import List, Dict, Callable, Optional
+from pydantic import BaseModel, Field
 import json
 
-@dataclass
-class TestCase:
+class TestCase(BaseModel):
+    """测试用例（使用 Pydantic 进行数据验证）"""
     input: str
     expected_output: str
-    metadata: Dict = None  # 可选的额外信息
+    metadata: Optional[Dict] = None  # 可选的额外信息
 
-@dataclass
-class EvalResult:
+class EvalResult(BaseModel):
+    """评估结果"""
     prompt_version: str
-    accuracy: float
-    format_compliance: float
+    accuracy: float = Field(ge=0, le=1)  # 限制在 0-1 范围
+    format_compliance: float = Field(ge=0, le=1)
     avg_latency_ms: float
     total_tokens: int
-    error_cases: List[Dict]
+    error_cases: List[Dict] = Field(default_factory=list)
 
 def evaluate_prompt(
     client,
@@ -864,21 +947,19 @@ print(f"{'总 Token 消耗':<20} {result_v1.total_tokens:>10} {result_v2.total_t
 
 假设你的客服工单分类系统上线了，每天处理 5000 条工单，准确率 85%。老板问能不能再提高。
 
-你有三个选项：
+你拿着这个问题去找老潘。
 
-**选项 A：继续优化 Prompt**
+"有三种路子，"老潘掰着手指，"看你愿意投什么。"
 
-投入几天时间，几十美元测试成本，预期准确率提升 2-5%。风险是可能过拟合测试集——你调着调着，Prompt 就变成"背测试集答案"了。
+"第一条，继续优化 Prompt。花几天时间调，几十美元跑测试集，能再提个 2 到 5 个点。但有个坑——你调着调着，Prompt 可能就变成'背测试集答案'了，上线反而更差。"
 
-**选项 B：改用传统机器学习方法**
+"第二条，上传统机器学习。先收集 5000 条标注数据——对，得人标——然后训练、部署、监控。开发周期一个月起步，后续还得管'数据漂移'、'模型监控'、'定期重训'这些事。能提 5 到 10 个点，但你要问问自己值不值。"
 
-需要收集 5000+ 标注数据，训练、部署、维护。预期准确率提升 5-10%，但开发周期可能要一个月。而且模型一上线，你就得开始考虑"数据漂移"、"模型监控"、"定期重训"这些事。
+"第三条，走混合路线。简单明确的用规则——标题含'退款'直接分账务。边界模糊的才走 LLM。复杂度会上升，但成本可控，整体能提 3 到 8 个点。"
 
-**选项 C：混合方案**
+小北听完有点懵："那……选哪个？"
 
-简单明确的工单用规则引擎处理——"标题含'退款'直接分到账务"。边界模糊的用 LLM 处理。预期准确率提升 3-8%，系统复杂度增加但成本可控。
-
-没有标准答案。选哪个取决于你的资源、时间、和对准确率的要求。但关键是：你要知道每个选项的成本和收益，而不是无脑"All in LLM"。
+"没有标准答案。"老潘笑了，"看你的资源、时间、和对准确率的要求。但关键是——你得知道每个选项的成本和收益，不能无脑'All in LLM'。"
 
 Prompt Engineering 是一个工具，不是万能药。知道工具的边界，比掌握工具的技巧更重要。
 
@@ -898,18 +979,17 @@ Prompt Engineering 是一个工具，不是万能药。知道工具的边界，�
 
 ```python
 # src/textagent/prompts/templates.py
-from dataclasses import dataclass
+from pydantic import BaseModel, Field
 from typing import List, Optional
 import yaml
 
-@dataclass
-class PromptTemplate:
-    """Prompt 模板"""
+class PromptTemplate(BaseModel):
+    """Prompt 模板（使用 Pydantic 进行配置验证）"""
     name: str
     role: str
     task: str
-    constraints: List[str]
-    output_format: str
+    constraints: List[str] = Field(default_factory=list)
+    output_format: str = ""
     few_shot_examples: Optional[List[dict]] = None
     use_cot: bool = False
     cot_steps: Optional[List[str]] = None
@@ -1002,21 +1082,20 @@ templates:
 
 ```python
 # src/textagent/evaluation/evaluator.py
-from dataclasses import dataclass
+from pydantic import BaseModel, Field
 from typing import List, Dict
 import json
 import csv
 
-@dataclass
-class EvalReport:
-    """评估报告"""
+class EvalReport(BaseModel):
+    """评估报告（使用 Pydantic 确保数据结构一致性）"""
     prompt_version: str
     test_set_size: int
-    accuracy: float
-    format_compliance: float
+    accuracy: float = Field(ge=0, le=1)
+    format_compliance: float = Field(ge=0, le=1)
     avg_latency_ms: float
     total_cost_usd: float
-    error_analysis: List[Dict]
+    error_analysis: List[Dict] = Field(default_factory=list)
 
     def to_markdown(self) -> str:
         """生成 Markdown 报告"""
