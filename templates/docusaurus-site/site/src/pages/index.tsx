@@ -54,28 +54,28 @@ const ArrowRightIcon = () => (
 // 特性数据 - 可配置为多个阶段或模块
 const features = [
   {
-    title: '基础篇',
-    description: '掌握核心概念和基础知识，为后续学习打下坚实基础。',
+    title: 'LLM 基础',
+    description: 'LLM API 使用、Prompt 设计、效果评估，建立 LLM 时代新思维。',
     icon: BookIcon,
-    weeks: 'Week 01-04',
+    weeks: 'Week 01-02',
   },
   {
-    title: '进阶篇',
-    description: '深入学习高级特性和技术，提升开发能力。',
+    title: '知识增强',
+    description: '向量检索、知识库构建、检索优化，给 LLM 装上外部记忆。',
     icon: CodeIcon,
-    weeks: 'Week 05-08',
+    weeks: 'Week 03-04',
   },
   {
-    title: '实战篇',
-    description: '通过实际项目练习，掌握工程化开发流程。',
-    icon: GraduationIcon,
-    weeks: 'Week 09-12',
-  },
-  {
-    title: '综合篇',
-    description: '综合运用所学知识，完成课程综合项目。',
+    title: '智能体',
+    description: '工具调用、规划推理、多智能体协作，让 LLM 会规划会用工具。',
     icon: LightbulbIcon,
-    weeks: 'Week 13-16',
+    weeks: 'Week 05-06',
+  },
+  {
+    title: '应用落地',
+    description: '评估框架、成本优化、端到端系统，掌握企业级应用开发。',
+    icon: GraduationIcon,
+    weeks: 'Week 07-08',
   },
 ];
 
@@ -184,7 +184,7 @@ export default function Home(): JSX.Element {
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="课程网站 - 系统化学习路径">
+      description="LLM 时代文本智能与商务应用 - 8周系统化学习路径">
       <HomepageHeader />
       <main className={styles.mainContent}>
         {/* 课程阶段 */}
