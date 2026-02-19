@@ -118,15 +118,6 @@ const config: Config = {
           ],
         },
         {
-          title: '资源',
-          items: [
-            {
-              label: '风格指南',
-              to: '/docs/style-guide',
-            },
-          ],
-        },
-        {
           title: '更多',
           items: [
             {
