@@ -124,10 +124,11 @@ def check_api_key() -> bool:
         print("  2. .env 文件：创建 .env 文件并添加 OPENAI_API_KEY=sk-...")
         return False
 
-    # 检查 API Key 格式（以 sk- 开头）
+    # 检查 API Key 格式（OpenAI 通常以 sk- 开头，其他厂商可能不同）
     if not api_key.startswith("sk-"):
-        print("[警告] API Key 格式可能不正确，通常以 'sk-' 开头")
-        return False
+        print("[提示] API Key 格式可能不是 OpenAI 格式（通常以 'sk-' 开头）")
+        print("      如果你使用的是其他厂商（如 DeepSeek、智谱等），格式可能不同")
+        # 不返回 False，因为其他厂商的 Key 格式可能不同
 
     return True
 
