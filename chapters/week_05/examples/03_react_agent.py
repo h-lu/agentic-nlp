@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import os
 import json
-from typing import Any, Dict, List, Optional, Callable, Callable
+from typing import Any, Dict, List, Optional, Callable
 from dataclasses import dataclass, field
 from openai import OpenAI
 

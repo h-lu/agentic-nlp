@@ -73,9 +73,17 @@ def calculate(expression: str) -> Dict[str, Any]:
 
     Returns:
         计算结果
+
+    安全警告:
+        eval() 即使限制 __builtins__ 仍有安全风险，不建议在生产环境使用。
+        生产环境替代方案：
+        1. numexpr 库 — 专门用于数学表达式计算
+        2. simpleeval 库 — 安全的表达式求值器
+        3. ast.literal_eval — 只支持字面量，不支持运算
+        4. 自定义解析器 — 完全控制允许的操作
     """
     try:
-        # 注意：生产环境应使用更安全的计算方式
+        # ⚠️ 警告：此实现仅供教学演示，生产环境请使用上述替代方案
         result = eval(expression, {"__builtins__": {}}, {})
         return {"expression": expression, "result": result}
     except Exception as e:

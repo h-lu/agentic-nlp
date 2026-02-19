@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, Dict, List, Optional, Callable, Callable, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Callable
 from dataclasses import dataclass
 from openai import OpenAI
 
