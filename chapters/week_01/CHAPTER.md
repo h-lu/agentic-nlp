@@ -342,7 +342,6 @@ Week 01 豁免回顾桥要求。
 > 参考（访问日期：2026-02-19）：
 > - https://cloudatler.com/blog/deepseek-r1-vs-openai-o1-cost-comparison
 > - https://www.datacamp.com/blog/deepseek-r1
-> - https://epoch.ai/data-insights/llm-inference-price-trends
 
 ## 第 2 节：让 LLM 开口说话 —— 你的第一次 API 调用
 
@@ -373,7 +372,7 @@ completion = client.chat.completions.create(
 )
 
 print(completion.choices[0].message.content)
-# 输出：财经
+# 输出可能是：财经
 ```
 
 运行这段代码，你应该看到类似"财经"的类别名称。
@@ -785,7 +784,7 @@ LLM 的计费单位不是"字"，而是 **Token**（词元）。
 
 具体到数字：
 - **英文**：大约 4 个字符 ≈ 1 个 Token（1 个 Token ≈ 0.75 个英文单词）。比如 "hello world" 是 2 个 Token。
-- **中文**：大约 1.5-2 个汉字 ≈ 1 个 Token（Token 数 ≈ 字数 ÷ 1.5~2）。比如"苹果公司发布新手机"可能是 5-7 个 Token。
+- **中文**：大约 1.5-2 个汉字 ≈ 1 个 Token（Token 数 ≈ 字数 ÷ 1.5~2）。比如"苹果公司发布新手机"可能是 5-6 个 Token。
 
 ### 用 tiktoken 计算 Token 数
 
@@ -813,7 +812,7 @@ print(f"英文 Token 数：{len(enc.encode(english_text))}")
 
 LLM 的费用分两部分：**输入 Token**（你的 Prompt）和 **输出 Token**（模型的回复）。两者价格不同，通常输出比输入贵——因为生成更难。
 
-以 GPT-4o 为例（2025 年价格，可能有变动）：
+以 GPT-4o 为例（2026 年 2 月价格示例，实际价格可能变动）：
 
 | 模型 | 输入价格 | 输出价格 |
 |------|---------|---------|

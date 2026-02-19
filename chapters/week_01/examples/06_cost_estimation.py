@@ -18,7 +18,7 @@ from typing import Literal
 
 
 # 当前主流模型的定价（美元/百万 Token）
-# 数据来源：各模型官方定价页面，2025 年 2 月
+# 数据来源：各模型官方定价页面，2026 年 2 月（价格可能变动）
 MODEL_PRICING = {
     "gpt-4o": {"input": 2.50, "output": 10.00},
     "gpt-4o-mini": {"input": 0.15, "output": 0.60},

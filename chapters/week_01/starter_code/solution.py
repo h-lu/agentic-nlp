@@ -199,7 +199,7 @@ class LLMClient:
         result = self.call(prompt, temperature=0)
         try:
             return json.loads(result)
-        except:
+        except json.JSONDecodeError:
             return {"raw": result}
 
 

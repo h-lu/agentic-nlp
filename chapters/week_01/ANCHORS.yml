@@ -17,7 +17,7 @@
   verification: tests/test_basic_call.py 中的 test_basic_call_with_system_message
 
 - id: anchor:token-counting
-  claim: 中文文本的 Token 数约为字数的 0.5-0.67 倍（即 1.5-2 个汉字 ≈ 1 Token，取决于模型和切词方式）
+  claim: 中文文本的 Token 数约为字数的 0.5-0.67 倍（平均约 1.5 个汉字 ≈ 1 Token，取决于模型和切词方式）
   evidence: examples/06_cost_estimation.py 中的中英文 Token 对比
   verification: tests/test_token_counting.py 中的 TestTokenCharRatio
 
