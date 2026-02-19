@@ -282,7 +282,7 @@ def demo_ab_testing():
     print("-" * 90)
 
     for config in configs:
-        print(f"{config['name']:<25} | {config['faithlessness' if 'faithlessness' in config else 'faithfulness']:<10} | {config['answer_relevancy']:<12} | {config['context_precision']:<14} | {config['context_recall']:<10}")
+        print(f"{config['name']:<25} | {config['faithfulness']:<10} | {config['answer_relevancy']:<12} | {config['context_precision']:<14} | {config['context_recall']:<10}")
 
     print("\n【分析】")
     print("- 配置 A → B：混合检索带来显著提升")

@@ -308,6 +308,11 @@ def measure_latency(pipeline, queries):
 - answer：RAG 系统的回答
 - ground_truth：标准答案
 
+> **提示**：`answer` 字段需要通过运行你的 RAG 系统生成。推荐流程：
+> 1. 先完成 Part 1 和 Part 2 的混合检索 + 重排序实现
+> 2. 运行 RAG 系统，对每个 `question` 生成回答
+> 3. 将生成的回答填入 `answer` 列表，然后进行 RAGAS 评估
+
 ```python
 # experiments/eval_dataset.py
 
