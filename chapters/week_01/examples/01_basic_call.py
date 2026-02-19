@@ -12,10 +12,15 @@
 
 或使用 .env 文件配合 python-dotenv：
     OPENAI_API_KEY=sk-...
+
+Python 版本要求：3.9+（使用了 str | None 类型注解语法）
 """
+
+from __future__ import annotations
 
 import os
 import sys
+from typing import Optional
 from openai import OpenAI, APIError, RateLimitError, AuthenticationError
 
 
@@ -61,7 +66,7 @@ def basic_call() -> str:
     return completion.choices[0].message.content
 
 
-def call_with_error_handling() -> str | None:
+def call_with_error_handling() -> Optional[str]:
     """
     带完整错误处理的 LLM API 调用示例。
 

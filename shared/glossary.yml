@@ -19,7 +19,7 @@
 
 - term_zh: Token
   term_en: Token
-  definition_zh: LLM 处理文本的基本单位，一个 Token 约等于 0.75 个英文单词或 0.5 个中文字符。LLM 按 Token 计费。
+  definition_zh: LLM 处理文本的基本单位。英文约 4 个字符 = 1 Token（即 1 Token ≈ 0.75 个英文单词）；中文约 1.5-2 个汉字 = 1 Token（即 Token 数 ≈ 字数 ÷ 1.5~2）。LLM 按 Token 计费。
   first_seen: week_01
 
 - term_zh: Chat Completions API
