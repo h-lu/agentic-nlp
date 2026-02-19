@@ -134,6 +134,9 @@ function HomepageHeader() {
           {siteConfig.title}
         </Heading>
         <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
+        <p className={styles.heroAuthor}>
+          上海应用技术大学 经济与管理学院 陆海波
+        </p>
         <div className={styles.buttons}>
           <Link
             className={clsx('button', styles.buttonPrimary)}

@@ -45,11 +45,18 @@
 .heroSubtitle {
   font-size: 1.5rem;
   color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 2.5rem;
+  margin-bottom: 1rem;
   font-weight: 400;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.heroAuthor {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 2.5rem;
+  font-weight: 400;
 }
 
 .buttons {
@@ -479,6 +486,10 @@
 
   .heroSubtitle {
     font-size: 1.125rem;
+  }
+
+  .heroAuthor {
+    font-size: 1rem;
   }
 
   .featuresSection,
