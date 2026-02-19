@@ -184,15 +184,28 @@ class CostTracker:
 
 还记得 Week 04 我们学的 **RAG 评估** 吗？RAGAS 框架给了我们忠实度（Faithfulness）、答案相关性（Answer Relevancy）、上下文精确度（Context Precision）等指标。当时你可能觉得"这些指标只针对 RAG"，但其实它们适用于任何 LLM 应用。
 
-现在我们把评估范围从"检索+生成"扩展到"完整的工作流"：
+现在我们把评估范围从"检索+生成"扩展到"完整的工作流"。
+
+先看核心思想——评估就是三个问题：
+
+```
+1. 运行系统 → 得到输出
+2. 用 LLM 作为评判者 → 给输出打分
+3. 汇总所有结果 → 得到整体质量
+```
+
+小北问："用 LLM 评估 LLM？这靠谱吗？"
+
+这是个好问题。Week 04 我们就讨论过——**LLM-as-Judge 不是完美的，但它足够一致**。只要评估标准固定，用同一个 LLM 评估不同系统，结果是可比较的。关键不是"绝对分数"，而是"相对差异"——系统 A 的忠实度比系统 B 高 0.1，这才是有价值的信号。
+
+代码实现其实很直接：
 
 ```python
 # examples/01_evaluation.py
 from typing import List, Dict
-from textagent.evaluation.metrics import calculate_faithfulness, calculate_relevancy
 
 class LLMEvaluator:
-    """LLM 应用评估器"""
+    """LLM 应用评估器——让另一个 LLM 来评判输出质量"""
 
     def __init__(self, llm_client):
         self.llm = llm_client
@@ -209,41 +222,50 @@ class LLMEvaluator:
         results = []
 
         for case in test_cases:
-            # 运行系统
+            # 第一步：运行你的系统，得到实际输出
             actual_output = self._run_system(case["query"])
 
-            # 计算指标——用 LLM 作为评判者
-            faithfulness = calculate_faithfulness(
-                actual_output,
-                case.get("context", ""),
-                self.llm
-            )
-            relevancy = calculate_relevancy(
-                case["query"],
-                actual_output,
-                self.llm
-            )
+            # 第二步：用 LLM 作为评判者打分
+            faithfulness = self._score_faithfulness(actual_output, case.get("context", ""))
+            relevancy = self._score_relevancy(case["query"], actual_output)
 
             results.append({
                 "query": case["query"],
-                "expected": case["expected"],
-                "actual": actual_output,
                 "faithfulness": faithfulness,
                 "relevancy": relevancy
             })
 
-        # 汇总
+        # 第三步：汇总——这才是有价值的"决策依据"
         return {
-            "num_cases": len(results),
             "avg_faithfulness": sum(r["faithfulness"] for r in results) / len(results),
             "avg_relevancy": sum(r["relevancy"] for r in results) / len(results),
             "details": results
         }
+
+    def _score_faithfulness(self, output: str, context: str) -> float:
+        """让 LLM 评判：输出是否忠实于上下文"""
+        prompt = f"""上下文：{context}
+输出：{output}
+
+评判：输出是否忠实于上下文？只回答 0-1 的分数。"""
+        response = self.llm.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return float(response.choices[0].message.content.strip())
+
+    def _score_relevancy(self, query: str, output: str) -> float:
+        """让 LLM 评判：输出是否相关于查询"""
+        # 类似实现...
+        pass
+
+    def _run_system(self, query: str) -> str:
+        """运行被测试的系统"""
+        # 这里调用你的 TextAgent 或其他系统
+        pass
 ```
 
-阿码举手："等等，用 LLM 评估 LLM？这靠谱吗？"
-
-这是个好问题。Week 04 我们就讨论过——**LLM-as-Judge 不是完美的，但它足够一致**。只要评估标准固定，用同一个 LLM 评估不同系统，结果是可比较的。关键不是"绝对分数"，而是"相对差异"——系统 A 的忠实度比系统 B 高 0.1，这才是有价值的信号。
+**这就是评估的全部秘密**：用另一个 LLM（通常是更强的 GPT-4）来评判你系统的输出。你评判的不是"这个答案完美吗"，而是"这个答案比另一个系统的答案更好吗"。
 
 ### 对比之后，真相浮现
 
@@ -257,6 +279,16 @@ class LLMEvaluator:
 | 多 Agent | 0.85 | $0.08 | 6.2s |
 
 老潘看到这个结果，笑了笑："这是教科书级别的 trade-off。效果提升 13%，成本翻 4 倍，延迟 2.5 倍。老板会问你：**这 0.1 的忠实度提升值不值 4 倍的钱？**"
+
+阿码突然"哦！"了一声："我明白了——评估的价值不是证明'哪个绝对好'，而是让你知道**每个选择的代价**。"
+
+没错。小北算了一下：如果每天有 10,000 次请求，单 Agent 每月成本约 $6,000，多 Agent 每月成本约 $24,000。**多出来的 $18,000 能换来 13% 的质量提升吗？**
+
+答案取决于场景。如果是"智能客服推荐产品"，0.1 的忠实度提升可能带来额外的 5% 转化率，假设客单价 $100，每天 10,000 次请求，可能多赚 $50,000/天——这 $18,000 完全值。
+
+但如果是"内部工具查询文档"，老板可能会说："单 Agent 够用了，省下来的钱给我加薪。"
+
+老潘说了一个真实故事："去年有个公司花了三个月做多 Agent 系统，上线后才发现成本是预算的 8 倍——因为他们从未做过评估对比。如果他们先用评估体系跑一周，就能提前知道：'质量提升 5%，成本翻 8 倍'，可能会选择继续用单 Agent，或者优化后再上线。"
 
 答案取决于场景。如果是"智能客服推荐产品"，0.1 的忠实度提升可能带来额外的转化率，值这个钱。如果是"内部工具查询文档"，老板可能会说"单 Agent 够用了"。
 
@@ -274,7 +306,7 @@ class LLMEvaluator:
 >
 > 你刚学的 `CostTracker`——记录每次调用、按 Agent 分组、计算汇总——在 AI 时代不是"可选功能"，而是企业级应用的"标配"。没有它，你的系统可能"能用但用不起"。
 >
-> 参考（访问日期：2026-02-17）：
+> 参考（访问日期：2026-02-19）：
 > - [LangChain - Tracing & Cost Management](https://python.langchain.com/docs/production_monitoring/tracing/)
 > - [LlamaIndex - Cost & Token Usage Tracking](https://docs.llamaindex.ai/en/stable/optimizing/usage_tracking/)
 
@@ -300,7 +332,15 @@ class LLMEvaluator:
 
 阿码的眼睛亮了："GPT-4o-mini 的成本只有 GPT-4 的 1/15？那为什么要用 GPT-4？"
 
-老潘说："问得好。规则是：**按 Agent 职责选择模型**。"
+老潘笑着说："这就像——你不会用挖掘机去敲钉子，对吧？小模型够用的时候，用大模型就是浪费钱。"
+
+小北举手："那我全都用 GPT-4o-mini 行不行？"
+
+"不行。"老潘摇头，"规划者 Agent 需要理解复杂任务、做长远推理，小模型容易'想不深'。你省了 $0.028 的成本，但可能得到一个糟糕的计划——得不偿失。"
+
+阿码若有所思："所以这是'把合适的工具给合适的人'……"
+
+"对！规则是：**按 Agent 职责选择模型**。"
 
 ```python
 # examples/02_model_selection.py
@@ -408,16 +448,28 @@ class PromptOptimizer:
 
 老潘点头："对。简单任务用核心 Prompt 就够了，复杂任务再追加示例。这样能节省 20-30% 的 Token 成本。"
 
+阿码若有所思："所以 Prompt 优化不是'越短越好'，而是'按需给'……"
+
+"没错！这就是'吝啬但有效'——不浪费一分钱，但也不该省的地方绝不省。"
+
 ### 最便宜的计算是不计算
 
 老潘说了一个反直觉的事实："生产环境中，30-50% 的查询是重复的——'怎么退款''物流多久''你们支持什么支付方式'……为什么要每次都调用 LLM？"
 
-**缓存**（Caching）就是答案——它让相同的查询直接返回之前的结果，跳过 LLM 调用。
+小北算了一笔账：如果每天 10,000 次请求，其中 40% 是重复的，缓存命中率 80%，那就是每天少调用 3,200 次 LLM。假设每次调用成本 $0.01，**一个月就能省下 $9,600**——这几乎是开发者的一个月工资。
+
+"等等，"阿码眼睛亮了，"所以缓存不是'提速'，而是'省钱'？"
+
+"两个都是，"老潘说，"缓存命中时响应从 3 秒降到 50 毫秒，用户体验更好。但对企业来说，**一个月省一万刀**更有说服力。"
 
 缓存有两个层次：
 
 1. **精确缓存**：完全相同的输入 → 返回缓存的结果（用哈希判断）
 2. **语义缓存**：语义相似的输入 → 返回缓存的结果（用向量相似度判断）
+
+"精确缓存像字典查找，语义缓存像'你之前问过类似的问题'。"老潘说，"后者更智能，但也更复杂——需要向量相似度计算。"
+
+先看一个简化版本：
 
 ```python
 # examples/02_caching.py
@@ -492,7 +544,11 @@ class CachedLLMClient:
 
 老潘拍着小北的肩膀说："看，成本降了一半多，效果只下降了 2%。这就是工程中的'甜点'——**用最小的质量损失换取最大的成本节省**。"
 
-阿码若有所思："那如果老板要求忠实度不低于 0.85 呢？"
+小北笑着说："老板看到这个数字应该会高兴。"
+
+"别高兴太早，"老潘开玩笑说，"老板可能会说——'既然你能省这么多钱，说明之前浪费了多少？回去反省！'"
+
+大家都笑了。但阿码若有所思："那如果老板要求忠实度不低于 0.85 呢？"
 
 老潘笑了："那你就给他说——要达到 0.85，成本是 $0.08/请求；降到 0.83，成本是 $0.035/请求。让老板选。评估的价值就是让你能用数据说话，而不是凭感觉争论。"
 
@@ -611,9 +667,11 @@ if __name__ == "__main__":
 
 阿码试了一下 API，发现一个问题："用户每次请求都要等 6 秒才能看到结果，体验不好。能不能让它像 ChatGPT 那样'逐字输出'？"
 
-这就是**流式输出**（Streaming）——让 LLM 逐 Token 返回内容，用户可以实时看到生成过程，感知延迟更低。
+老潘说了一个心理学事实：**人类的"感知延迟"和"实际延迟"是两回事**。6 秒的空白等待会让人觉得"很慢"，但 6 秒的"逐步输出"只会让人感觉"有点慢"。
 
-老潘说："流式输出还有一个隐藏的好处——**用户会觉得系统更快**。6 秒的等待如果能看到东西在动，感觉上会短很多。"
+"就像下载文件，"阿码说，"有进度条和没进度条，感觉完全不一样。"
+
+"对！流式输出就是给 LLM 调用加进度条。"老潘说，"用户 0.5 秒后看到'正在规划'，1 秒后看到'执行步骤 1/3'，2 秒后看到'步骤 2/3'……虽然总耗时还是 6 秒，但用户不会觉得'卡住了'。"
 
 ```python
 # examples/03_streaming.py
@@ -731,7 +789,7 @@ class RobustLLMClient:
 >
 > 你刚学的 `CostTracker` 和 `TraceContext` 是"手工版"的可观测性——足以理解原理，但生产环境中建议使用 LangSmith 等工具，它们提供更强大的可视化、告警、调试能力。
 >
-> 参考（访问日期：2026-02-17）：
+> 参考（访问日期：2026-02-19）：
 > - [LangSmith - LLM Application Observability](https://smith.langchain.com/)
 > - [Arize Phoenix - Open Source LLM Observability](https://docs.arize.com/phoenix/)
 > - [Weights & Biases - LLM Monitoring](https://wandb.ai/sweeps)
@@ -757,6 +815,8 @@ class RobustLLMClient:
 | **日志** | 发生了什么？ | "Agent X 在 14:32 调用了 LLM，成本 $0.05，返回成功" |
 | **指标** | 有多少？ | "过去 5 分钟每分钟 100 次请求，平均延迟 3s，错误率 0.5%" |
 | **Trace** | 为什么这样？ | "请求 A → Agent B → LLM C → Agent D 的完整链路，耗时 6.2s" |
+
+老潘说了一个真实故事："去年有个公司上线了 LLM 应用，但没有 Trace。用户投诉'回答错了'，团队花了三天排查——怀疑是 Prompt 问题、模型问题、数据问题……最后才发现是检索器的向量数据库连接超时，返回了空结果，LLM 只能'瞎编'。如果有 Trace，他们一眼就能看到'检索阶段花了 8 秒，返回空'——三天的排查变成三分钟。"
 
 ### 日志不是 print()
 
@@ -862,7 +922,36 @@ async def metrics():
 
 老潘说："所以你需要 Trace——记录每个请求的完整链路。"
 
-**Trace** 是分布式系统中的概念，它用"一个 Trace 包含多个 Span"的方式记录完整调用链。每个 Span 是一个操作的记录（开始时间、结束时间、元数据），Trace 把这些 Span 串起来。
+**Trace** 是分布式系统中的概念。别被这个词吓到——它的核心思想就是"把一条请求的完整旅程画出来"。
+
+你可以把它想象成**快递追踪**：每个包裹（请求）有唯一的运单号（trace_id），你可以看到它从发货、到中转站、再到签收的每一步。如果包裹丢了，你立刻能知道是在哪个环节出的问题。
+
+想象一下，一个请求在多 Agent 系统里的旅程是这样的：
+
+```
+用户请求 "分析这份数据"
+    │
+    ├─→ [Span 1] 规划者 Agent (1.2s)
+    │     └─ 生成计划：3 个子任务
+    │
+    ├─→ [Span 2] 执行者 Agent (4.1s)
+    │     ├─→ [Span 2.1] 调用情感分析工具 (1.5s)
+    │     ├─→ [Span 2.2] 调用关键词提取 (0.8s)
+    │     └─→ [Span 2.3] 调用词频统计 (1.8s)
+    │
+    └─→ [Span 3] 审核者 Agent (0.9s)
+          └─ 检查结果质量
+
+总耗时：6.2 秒
+```
+
+每个 `Span` 记录三件事：**谁做的、做了多久、附加信息**。一个 `Trace` 就是多个 `Span` 的集合，像一条链子把所有操作串起来。
+
+阿码问："这跟日志有什么区别？"
+
+老潘说："日志是散落的记录，你不知道哪条日志属于哪个请求。Trace 把所有操作按 `trace_id` 串起来——一个请求的所有操作都有同一个 ID，你可以直接查'这个 ID 的完整旅程'。"
+
+代码实现其实就是个"计时器"：
 
 ```python
 # examples/04_tracing.py
@@ -872,15 +961,22 @@ import uuid
 import time
 
 class TraceContext:
-    """追踪上下文"""
+    """追踪上下文——像秒表，但可以同时记录多个操作"""
 
     def __init__(self):
-        self.trace_id = str(uuid.uuid4())
+        self.trace_id = str(uuid.uuid4())  # 唯一 ID，标识这次请求
         self.spans: List[Dict] = []
 
+    # @contextmanager 装饰器让这个函数可以用 with 语句调用
+    # 进入 with 时执行 yield 之前的代码，退出时执行 yield 之后的代码
     @contextmanager
     def span(self, name: str, **metadata):
-        """创建一个 Span——用 with 语句自动计时"""
+        """创建一个 Span——用 with 语句自动计时
+
+        用法：
+        with trace.span("plan", agent="planner", task=task):
+            plan = self.planner.create_plan(task)
+        """
         span_id = str(uuid.uuid4())
         start_time = time.time()
 
@@ -892,27 +988,32 @@ class TraceContext:
         }
 
         try:
-            yield span
+            yield span  # 让你的代码在这里运行
         finally:
+            # 退出 with 时自动记录结束时间
             span["end_time"] = time.time()
             span["duration_ms"] = int((span["end_time"] - span["start_time"]) * 1000)
             self.spans.append(span)
 
     def get_trace(self) -> Dict:
-        """获取完整 Trace"""
+        """获取完整 Trace——所有 Span 的集合"""
         return {
             "trace_id": self.trace_id,
             "spans": self.spans,
             "total_duration_ms": sum(s["duration_ms"] for s in self.spans)
         }
+```
 
-# 使用
+使用起来更简单：
+
+```python
 class TracedMultiAgentWorkflow:
     """带追踪的多 Agent 工作流"""
 
     def run(self, task: str) -> Dict:
-        trace = TraceContext()
+        trace = TraceContext()  # 创建追踪器
 
+        # 每个 Agent 的执行都用 with span() 包起来
         with trace.span("plan", agent="planner", task=task):
             plan = self.planner.create_plan(task)
 
@@ -922,21 +1023,29 @@ class TracedMultiAgentWorkflow:
         with trace.span("review", agent="reviewer"):
             review = self.reviewer.review_result(plan, result)
 
-        # 存储 Trace（可发送到 LangSmith 等）
+        # 把 Trace 存起来（可以发送到 LangSmith 等平台）
         self._store_trace(trace.get_trace())
 
         return {"plan": plan, "execution": result, "review": review}
 ```
 
-有了 Trace，当用户投诉时，你可以直接查这个请求的 `trace_id`，看到完整的执行链路："规划花了 1.2 秒，执行花了 4.1 秒，审核花了 0.9 秒"。如果执行阶段某个步骤异常超时，你一眼就能看到。
+老潘说了一个真实案例："去年我们有个系统，用户投诉'响应太慢'。没有 Trace 的情况下，我们花了三天才排查出是执行者的某个工具调用有问题。有了 Trace，直接查慢请求的 trace_id，一眼就能看到——那个 Span 耗时 8 秒，其他都正常。三天的排查变成了三分钟。"
 
-老潘说："没有 Trace 的系统就是'盲开'——你不知道用户的问题出在哪，每次都是'猜测原因 → 修改代码 → 等待下一个问题'。有了 Trace，你可以直接定位问题。"
+这就是 Trace 的价值：**把"猜测原因"变成"看到原因"**。
 
 ### 告警：问题自动找你
 
 老潘的最后一条建议是："不仅要监控，还要告警——当指标异常时及时通知。"
 
 为什么需要告警？因为你不能 24 小时盯着仪表盘。告警让问题自动找你。
+
+小北问："那我给所有指标都设置告警？"
+
+"千万别，"老潘摇头，"那是'狼来了'的故事。告警太多，你会麻木，最后直接关掉通知——那就什么都没了。"
+
+阿码笑了："所以告警要'少而精'？"
+
+"对。3-5 个核心告警就够了：成本、延迟、错误率、质量下降。其他的都是'噪音'。生产环境中，**真正让你半夜三点起床的电话，一年不应该超过十次**。"
 
 ```python
 # examples/04_alerts.py
@@ -1050,6 +1159,12 @@ class TextAgentEvaluator:
             }
         }
 ```
+
+> **设计思考**：为什么把评估、成本、延迟聚合在一个类里？
+>
+> 1. **单一数据源**：所有指标从同一个 workflow 收集，保证数据一致性
+> 2. **便于对比**：质量 vs 成本的 trade-off 可以直接在一个返回值里看到
+> 3. **符合单一职责**：这个类只负责"度量系统"，不负责运行系统
 
 现在 TextAgent 可以回答"我表现怎么样"这个问题了。
 
@@ -1244,7 +1359,7 @@ class ObservableWorkflow:
 - Week 08：端到端系统集成与终稿
 ```
 
-TextAgent 现在是一个可部署、可监控、可优化的生产级系统了。它不仅能工作，而且你能知道它工作得怎么样、成本花在哪、有没有出问题。老潘看了会说："这才是能上生产的东西——不是能跑就行，而是可观测、可优化、可维护。"
+经过这周的生产化改造，TextAgent 已经从一个"能跑的脚本"进化为一个可部署、可监控、可优化的生产级系统。它不仅能工作，而且你能知道它工作得怎么样、成本花在哪、有没有出问题。老潘看了会说："这才是能上生产的东西——不是能跑就行，而是可观测、可优化、可维护。"
 
 ---
 

@@ -156,8 +156,8 @@ class LLMEvaluator:
         """
         计算忠实度
 
-        简化实现：基于关键词重叠
-        实际应用中可用 LLM-as-Judge
+        ⚠️ 这是教学简化实现：基于关键词重叠
+        生产环境应使用 LLM-as-Judge（参考 CHAPTER.md 第 216-225 行）
         """
         if not context:
             return 0.5
@@ -175,7 +175,8 @@ class LLMEvaluator:
         """
         计算相关性
 
-        简化实现：基于答案长度和关键词匹配
+        ⚠️ 这是教学简化实现：基于答案长度和关键词匹配
+        生产环境应使用 LLM-as-Judge（参考 CHAPTER.md 第 216-225 行）
         """
         if not answer:
             return 0.0
@@ -278,6 +279,10 @@ class ModelSelector:
 class SemanticCache:
     """
     语义缓存（作业 Part 3 参考实现）
+
+    ⚠️ 当前实现是精确匹配（字符串相等）
+    真正的语义缓存应使用向量相似度（如 cosine similarity > 0.9）
+    参考 CHAPTER.md 第 435-443 行
 
     要求：
     1. 支持精确匹配缓存

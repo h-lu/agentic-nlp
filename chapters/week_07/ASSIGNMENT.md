@@ -114,10 +114,10 @@ class LLMEvaluator:
         """批量评估测试用例
 
         Args:
-            test_cases: [
-                {"query": "用户问题", "expected": "期望答案", "context": "检索到的上下文"},
-                ...
-            ]
+            test_cases: 测试用例列表，每个用例是一个字典
+                格式：{"query": "用户问题", "expected": "期望答案", "context": "检索到的上下文"}
+                注意：这与 CHAPTER.md 中的 TestCase dataclass 等价，你可以选择使用
+                dataclass 或字典格式，两者都可以正常工作
             system_run_func: 运行系统的函数，接受 query，返回实际输出
 
         Returns:
@@ -324,18 +324,18 @@ async def analyze_stream(request: AnalysisRequest):
         try:
             # 阶段 1：规划
             plan = textagent.planner.create_plan(request.task)
-            yield f"data: {{'stage': 'plan', 'data': {json.dumps(plan)}}}\n\n"
+            yield f"data: {json.dumps({'stage': 'plan', 'data': plan})}\n\n"
 
             # 阶段 2：执行——逐步返回
             for step_result in textagent.executor.execute_plan_iter(plan):
-                yield f"data: {{'stage': 'execution', 'data': {json.dumps(step_result)}}}\n\n"
+                yield f"data: {json.dumps({'stage': 'execution', 'data': step_result})}\n\n"
 
             # 阶段 3：完成
             summary = textagent.cost_tracker.get_summary()
-            yield f"data: {{'stage': 'done', 'data': {json.dumps(summary)}}}\n\n"
+            yield f"data: {json.dumps({'stage': 'done', 'data': summary})}\n\n"
 
         except Exception as e:
-            yield f"data: {{'stage': 'error', 'data': '{str(e)}'}}\n\n"
+            yield f"data: {json.dumps({'stage': 'error', 'data': str(e)})}\n\n"
 
     return StreamingResponse(
         generate(),
