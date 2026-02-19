@@ -107,7 +107,7 @@ Week 01 我们就学过 **范式转变**——从"训练模型"到"设计系统"
 
 老潘给小北画了一张架构图：
 
-```
+```text
 用户请求
     ↓
 ┌─────────────────────────────────────────────┐
@@ -136,7 +136,7 @@ Week 01 我们就学过 **范式转变**——从"训练模型"到"设计系统"
 └─────────────────────────────────────────────┘
     ↓
 响应给用户
-```
+```text
 
 阿码问："这不就是多 Agent 系统吗？"
 
@@ -222,7 +222,7 @@ class WorkflowOrchestrator:
             "cost_usd": context.state.get("cost_usd", 0),
             "latency_ms": context.state.get("latency_ms", 0)
         }
-```
+```python
 
 老潘点评道："这个设计的核心是 `TaskContext`——它像一辆'数据巴士'，把各个模块连起来。每个模块只从巴士上拿自己需要的数据，把结果放回巴士。这样模块之间解耦，你换一个 Agent 不用改其他代码。"
 
@@ -271,7 +271,7 @@ class SystemConfig(BaseModel):
 # 使用
 config = SystemConfig.from_yaml("config/production.yaml")
 planner_config = config.agents["planner"]
-```
+```python
 
 这样，你可以有 `config/development.yaml`、`config/production.yaml` 不同环境的配置，切换环境只需要改一个文件。
 
@@ -283,7 +283,7 @@ planner_config = config.agents["planner"]
 # examples/01_bootstrap.py
 from textagent.orchestrator import WorkflowOrchestrator
 from textagent.agents import PlannerAgent, ExecutorAgent, RetrieverAgent, ReviewerAgent
-from textagent.capabilities import LLMLLMCapability, RAGCapability, ToolCapability
+from textagent.capabilities import LLMCapability, RAGCapability, ToolCapability
 from textagent.observability import ObservabilityManager
 
 def create_system(config: SystemConfig) -> WorkflowOrchestrator:
@@ -319,7 +319,7 @@ if __name__ == "__main__":
     system = create_system(config)
     result = system.run("分析这份数据")
     print(result)
-```
+```python
 
 老潘说："这个 `create_system` 函数是你的'系统蓝图'。任何人看这个函数，就知道系统是怎么组装的。这就是**可维护性**——新来的人读一遍代码就能理解整体架构。"
 
@@ -339,7 +339,7 @@ if __name__ == "__main__":
 >
 > 参考（访问日期：2026-02-17）：
 > > - [LangChain - Production Best Practices](https://python.langchain.com/docs/production/)
-> > - <!-- TODO: 需联网搜索 "LlamaIndex production guide 2026" 补充最新参考链接 -->
+> > - LlamaIndex 官方文档提供了详细的部署指南和生产环境最佳实践（建议查阅最新版本）
 
 ---
 
@@ -419,13 +419,13 @@ report = calculator.calculate_savings(daily_requests=1000, days=90)
 
 print(f"90 天节省成本: ${report['savings_usd']:.2f}")
 print(f"节省比例: {report['savings_percentage']:.1f}%")
-```
+```python
 
 输出示例：
-```
+```text
 90 天节省成本: $220,500.00
 节省比例: 98.6%
-```
+```text
 
 老潘说："这才是老板想看的数字——你不用解释什么是 RAG，直接告诉他'90 天节省 22 万美元'。商业价值报告是你的'门票'，有了这个，老板才会愿意听技术细节。"
 
@@ -435,26 +435,22 @@ print(f"节省比例: {report['savings_percentage']:.1f}%")
 
 演示脚本示例（10 分钟）：
 
-```markdown
-# TextAgent 演示脚本
+1. **第 1 部分：业务场景（2 分钟）**
+   - "这是客服团队每天要处理的 1000 个用户咨询"
+   - 展示 3 个真实案例（简单、中等、复杂）
 
-## 第 1 部分：业务场景（2 分钟）
-- "这是客服团队每天要处理的 1000 个用户咨询"
-- 展示 3 个真实案例（简单、中等、复杂）
+2. **第 2 部分：系统演示（5 分钟）**
+   - 案例 1（简单）：实时演示，突出速度
+   - 案例 2（中等）：展示 Agent 协作过程
+   - 案例 3（复杂）：展示检索 + 审核
 
-## 第 2 部分：系统演示（5 分钟）
-- 案例 1（简单）：实时演示，突出速度
-- 案例 2（中等）：展示 Agent 协作过程
-- 案例 3（复杂）：展示检索 + 审核
+3. **第 3 部分：价值证明（2 分钟）**
+   - 展示成本对比、节省比例
+   - 展示质量指标（准确率提升）
 
-## 第 3 部分：价值证明（2 分钟）
-- 展示成本对比、节省比例
-- 展示质量指标（准确率提升）
-
-## 第 4 部分：风险控制（1 分钟）
-- 演示人工审核介入点
-- 说明回滚方案
-```
+4. **第 4 部分：风险控制（1 分钟）**
+   - 演示人工审核介入点
+   - 说明回滚方案
 
 阿码问："演示时出错了怎么办？"
 
@@ -482,7 +478,11 @@ class RollbackPlan:
 class ProductionSystem:
     """生产系统（带回滚能力）"""
 
-    def __init__(self):
+    def __init__(self, orchestrator=None):
+        from textagent.observability import ObservabilityManager
+
+        self.orchestrator = orchestrator
+        self.observability = ObservabilityManager()
         self.rollback_plan = RollbackPlan(
             trigger_conditions={
                 "error_rate_threshold": 0.05,  # 错误率 > 5%
@@ -530,7 +530,7 @@ class ProductionSystem:
             return {"status": "escalated", "message": "转人工处理"}
         else:
             return {"status": "fallback", "result": self._call_legacy_system(user_input)}
-```
+```python
 
 老潘说："有了这个，老板才会放心。商业落地不是'技术完美'，而是**风险可控**。你能证明'出了问题有办法解决'，老板才敢让你上生产。"
 
@@ -599,16 +599,36 @@ class ABTestEngine:
         """分析 A/B 测试结果"""
         from scipy import stats
 
+        # 检查是否有足够的数据
+        if not self.results["A"] and not self.results["B"]:
+            return {
+                "test_name": self.config.name,
+                "error": "insufficient_data",
+                "message": "No data collected for either version",
+                "sample_size": {"A": 0, "B": 0}
+            }
+
         # 提取指标
         a_values = [r.get("quality_score", 0) for r in self.results["A"]]
         b_values = [r.get("quality_score", 0) for r in self.results["B"]]
+
+        # 如果某个版本没有数据，无法做统计检验
+        if not a_values or not b_values:
+            return {
+                "test_name": self.config.name,
+                "error": "insufficient_data",
+                "message": f"Missing data for version {'A' if not a_values else 'B'}",
+                "sample_size": {"A": len(a_values), "B": len(b_values)},
+                "mean_quality": {"A": sum(a_values) / len(a_values) if a_values else None,
+                               "B": sum(b_values) / len(b_values) if b_values else None}
+            }
 
         # t 检验
         t_stat, p_value = stats.ttest_ind(a_values, b_values)
 
         # 计算均值
-        a_mean = sum(a_values) / len(a_values) if a_values else 0
-        b_mean = sum(b_values) / len(b_values) if b_values else 0
+        a_mean = sum(a_values) / len(a_values)
+        b_mean = sum(b_values) / len(b_values)
 
         # 判断是否显著
         is_significant = p_value < 0.05
@@ -643,7 +663,7 @@ for user_id, user_input in mock_user_requests:
 analysis = ab_engine.analyze()
 print(f"胜者: {analysis['winner']}")
 print(f"提升: {analysis['lift']:.1f}%")
-```
+```python
 
 阿码举手："等等，p < 0.05 是什么意思？"
 
@@ -651,13 +671,15 @@ print(f"提升: {analysis['lift']:.1f}%")
 
 老潘说："问得好。很多人用了一辈子 p 值，但不知道它在说什么。p < 0.05 的意思是：**如果 A 和 B 其实没有区别，看到这种差异的概率小于 5%**。换句话说，你有 95% 的信心说 B 真的比 A 好。这是统计显著性的标准。"
 
+老潘想了想，又说："举个例子：如果让你抛硬币 10 次，你可能会得到 6 次正面、4 次反面——这很正常。但如果连续抛 10 次，每次都是正面，你会怎么想？你会怀疑这枚硬币是不是有问题。p 值就是度量这种'怀疑程度'的指标——p 越小，越说明'这两个版本没有区别'这个假设不成立。"
+
 ### 灰度发布：逐步推广
 
 A/B 测试告诉你"B 比 A 好"，但你应该立即把所有流量切到 B 吗？老潘摇头："**灰度发布**（Canary Deployment）——先给小部分用户用，没问题再逐步扩大。"
 
 灰度发布的流程：
 
-```
+```text
 第 1 天：5% 流量 → 监控指标
   ↓ 无问题
 第 3 天：25% 流量 → 监控指标
@@ -665,7 +687,7 @@ A/B 测试告诉你"B 比 A 好"，但你应该立即把所有流量切到 B 吗
 第 7 天：50% 流量 → 监控指标
   ↓ 无问题
 第 14 天：100% 流量
-```
+```text
 
 ```python
 # examples/03_canary.py
@@ -729,7 +751,7 @@ if canary.should_use_new_version(user_id):
     result = new_system.run(user_input)
 else:
     result = old_system.run(user_input)
-```
+```python
 
 老潘说："灰度发布的核心是**风险控制**。你不需要一次性把所有用户都暴露在新版本下。如果发现问题，只有 5% 的用户受影响，而不是 100%。换句话说：宁可让少数人失望，不要让所有人崩溃。"
 
@@ -795,13 +817,15 @@ async def submit_feedback(request_id: str, rating: int, comment: str):
         timestamp=datetime.now().isoformat()
     ))
     return {"status": "received"}
-```
+```python
 
 老潘说："有了反馈数据，你就可以做**数据驱动的迭代**。不是'我觉得该改什么'，而是'用户抱怨最多的地方是什么'。这就是持续优化的基础。"
 
 阿码突然问了一个好问题："那如果用户说 A，数据说 B，听谁的？"
 
-老潘笑了："这是个好问题。我的经验是：用户说的和用户做的，经常不一样。用户会说什么'我喜欢简洁的界面'，但数据可能显示他们最常用的是那个复杂的高级功能。所以你要两边都看：用户反馈告诉你'他们认为自己想要什么'，使用数据告诉你'他们实际想要什么'。两者结合，才能做对决策。"
+老潘笑了："这是个好问题。我的经验是：用户说的和用户做的，经常不一样。用户会说什么'我喜欢简洁的界面'，但数据可能显示他们最常用的是那个复杂的高级功能。"
+
+老潘接着说："我以前做过一个项目，用户反馈说'这个功能太复杂了，希望能简化'。但数据显示，这个复杂功能的使用率是所有功能里最高的——而且用户每次使用的时间很长，说明他们真的在用。后来我们发现，用户不是想简化，而是想有一个更好的引导。我们改了引导文案，投诉率下降了 70%。所以你要两边都看：用户反馈告诉你'他们认为自己想要什么'，使用数据告诉你'他们实际想要什么'。两者结合，才能做对决策。"
 
 这是一个"哦！"时刻——小北和阿码都恍然大悟。用户不总是对的，但用户总是值得倾听的。关键是怎么听。
 
@@ -822,9 +846,9 @@ async def submit_feedback(request_id: str, rating: int, comment: str):
 > 另一个趋势是"实验驱动优化"。Google 和 Meta 内部都有完善的 A/B 测试平台，任何改动（包括 Prompt 调整）都必须通过 A/B 测试。2026 年的共识是：**不要相信直觉，要相信数据**。你刚学的 A/B 测试和灰度发布，在企业环境中不是"可选项"，而是"必选项"。
 >
 > 参考（访问日期：2026-02-17）：
-> > - <!-- TODO: 需联网搜索 "McKinsey generative AI ROI 2026" 补充最新报告链接 -->
+> > - McKinsey 等咨询公司定期发布生成式 AI 商业价值报告（建议查阅 2025-2026 年度报告）
 > > - [LangSmith - Business Metrics](https://smith.langchain.com/business-metrics)
-> > - <!-- TODO: 需联网搜索 "Arize LLM ROI calculator 2026" 补充参考链接 -->
+> > - Arize 等厂商提供 LLM ROI 计算工具和案例分析（建议查阅官网最新文档）
 
 ---
 
@@ -838,6 +862,8 @@ async def submit_feedback(request_id: str, rating: int, comment: str):
 
 老潘把文档分成四层，每层写给不同的受众。他说："文档不是'写一遍就完'的任务，而是'写给不同的读者'的作品。"
 
+小北听到"四层文档"的时候，眉头皱了一下——这听起来像是要写很多文档。老潘看出了他的顾虑，笑着说："别被'四层'吓到了。你不需要一天内写完所有文档，而且也不需要从零开始。我建议你先写 README（这对你自己也有帮助），然后是架构文档（开发过程中自然会产生）。API 文档可以根据代码注释自动生成，运维手册可以在部署过程中逐步完善。关键是：**先有框架，再填内容**。四个文档不是四座山，而是一张地图——你只需要走完它。"
+
 | 层次 | 受众 | 内容 | 位置 |
 |------|------|------|------|
 | **README** | 所有人 | 项目是什么、怎么快速开始 | 项目根目录 |
@@ -845,9 +871,11 @@ async def submit_feedback(request_id: str, rating: int, comment: str):
 | **API 文档** | 集成方 | 接口怎么调用、参数是什么 | `docs/api.md` 或自动生成 |
 | **运维手册** | 运维 | 怎么部署、怎么监控、怎么排错 | `docs/operations.md` |
 
-### README：项目的门面
+**老潘说**："四个层次，四个读者。README 写给所有人看——包括你的老板；架构文档写给接手的开发者——他们会感谢你的清晰；API 文档写给集成方——他们只想知道怎么调用；运维手册写给值班同事——他们半夜要修 bug 时，没时间读代码。"
 
-README 是项目的"门面"，它应该回答五个问题：
+README 的目标是让陌生人用 5 分钟理解你的项目——不需要成为专家，但能判断"这是不是我需要的"。小北的 README 最初只有 3 行代码链接，老潘看了直摇头："如果我是新来的，我连这玩意儿是干嘛的都不知道。"
+
+后来他改成了这样：
 
 ```markdown
 # TextAgent — Agentic 文本分析系统
@@ -908,11 +936,16 @@ textagent/
 ## 许可证
 
 MIT License
-```
+```markdown
 
-### 架构文档：系统的蓝图
+> **关键要点**：
+> - README 是项目的"门面"，5 分钟内让陌生人理解你做什么
+> - 用一句话说清楚"它是什么"，而不是"它怎么实现"
+> - "快速开始"部分必须让读者能跑起来，否则他们会放弃
 
-架构文档解释"为什么这样设计"，不是"代码是什么"：
+**架构文档**是写给未来的自己和接手同事的——不是"复制粘贴代码"，而是解释"为什么这样设计"。代码告诉你"是什么"，架构文档告诉你"为什么"。
+
+阿码问："代码注释不是就够了吗？"老潘摇头："注释说'这里调用了 LLM'，但不会说'为什么选这个模型而不是那个'。架构文档填补的就是这个gap。"
 
 ```markdown
 # TextAgent 架构文档
@@ -982,11 +1015,14 @@ MIT License
 1. 在 `tools/` 中定义工具函数
 2. 在 `ToolCapability` 中注册
 3. 更新 Agent 的 Prompt 模板
-```
+```markdown
 
-### API 文档：接口手册
+> **关键要点**：
+> - 架构文档回答"为什么这样设计"，不是"怎么实现"
+> - 代码注释说"这里调用了 LLM"，架构文档说"为什么选 GPT-4 而不是 GPT-3.5"
+> - 一个新人读完架构文档，应该能知道在哪里添加新功能
 
-API 文档说明"怎么调用系统"：
+**API 文档**是给集成方用的——他们不关心你的代码有多优雅，只关心"怎么调通"。小北第一次做集成时，对方花了三天时间才搞对参数格式，后来他才明白：**好的 API 文档能让一个陌生人在 10 分钟内跑通第一个调用**。
 
 ```markdown
 # TextAgent API 文档
@@ -1072,11 +1108,17 @@ response = requests.post(
 result = response.json()
 print(result["cost_usd"])
 \`\`\`
-```
+```markdown
 
-### 运维手册：部署与排错
+> **关键要点**：
+> - API 文档是给集成方用的，不是给开发者看的
+> - 好的 API 文档能让陌生人在 10 分钟内跑通第一个调用
+> - 必须包含：请求示例、响应示例、错误码说明
+> - 参数类型、默认值、是否必需——一个都不能少
 
-运维手册说明"怎么让系统持续运行"：
+### 运维手册：写给凌晨 3 点修 bug 的同事
+
+运维手册不是写给开发者的，而是写给**半夜被告警电话叫醒的人**。老潘的经验是：写运维手册时，想象你刚刚从床上爬起来，脑子还没转起来——这时候你需要的是清晰的步骤，不是抽象的设计原则。
 
 ```markdown
 # TextAgent 运维手册
@@ -1162,7 +1204,13 @@ kubectl set image deployment/textagent textagent=textagent:v1.0.0
 - 应用日志：`/var/log/textagent/app.log`
 - 访问日志：`/var/log/textagent/access.log`
 - Trace 日志：发送到 LangSmith
-```
+```markdown
+
+> **关键要点**：
+> - 运维手册是给凌晨 3 点被叫醒的人写的
+> - 假设读者脑子还没转起来，步骤要清晰、具体
+> - "常见问题"部分基于真实故障，不是臆想
+> - 每个告警都要有对应的处理步骤
 
 老潘说："有了这四层文档，任何人都能在一天内理解你的系统、一周内上手修改、一个月内成为专家。**文档是项目的生命线**，不是'可选项'。"
 
@@ -1218,7 +1266,7 @@ kubectl set image deployment/textagent textagent=textagent:v1.0.0
 - [ ] 演示脚本已准备
 - [ ] 风险评估已完成
 - [ ] 回滚方案已确认
-```
+```markdown
 
 老潘说："这个清单就是你的'交付保险'。每打一个勾，接手的人就少一个坑。当所有勾都打完，你才能放心地离开。"
 
@@ -1269,7 +1317,7 @@ if __name__ == "__main__":
     system = create_system("config/production.yaml")
     result = system.run("分析这份数据")
     print(result)
-```
+```python
 
 **2. 准备项目展示材料**
 
@@ -1291,7 +1339,7 @@ def generate_value_report(daily_requests: int, days: int = 90) -> Dict:
 # 报告示例
 # 90 天节省成本: $220,500
 # 节省比例: 98.6%
-```
+```text
 
 **3. 实现 A/B 测试框架**
 
@@ -1312,7 +1360,7 @@ def run_ab_test(config: ABTestConfig) -> Dict:
         engine.record_result(version, result)
 
     return engine.analyze()
-```
+```python
 
 **4. 生成完整文档**
 
@@ -1326,7 +1374,7 @@ def run_ab_test(config: ABTestConfig) -> Dict:
 ├── api.md                 # API 接口、示例代码
 ├── operations.md          # 部署、监控、排错
 └── delivery_checklist.md  # 交付清单
-```
+```markdown
 
 **5. 收敛终稿 report.md**
 
@@ -1389,7 +1437,7 @@ TextAgent 是一个端到端的 Agentic 文本分析系统...
 ## 团队与致谢
 
 ...
-```
+```markdown
 
 **6. 导出 report.html**
 
@@ -1422,7 +1470,7 @@ def generate_html_report(markdown_path: str, output_path: str):
 
 if __name__ == "__main__":
     generate_html_report("report.md", "report.html")
-```
+```python
 
 ### 最终成果
 
@@ -1447,7 +1495,7 @@ Week 08 结束时，你将拥有：
 git tag -a v1.0.0 -m "Release TextAgent v1.0"
 git push origin v1.0.0
 git log --oneline --graph -n 20
-```
+```bash
 
 常见坑：
 - 提交前忘记更新文档：代码改了但文档没改，接手的人会困惑

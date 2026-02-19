@@ -345,6 +345,9 @@ class ProductionSystem:
 
     def __init__(self):
         # TODO: 初始化回滚方案
+        # 提示：需要初始化 self.observability = ObservabilityManager()
+        # 这样 check_health() 方法才能调用 self.observability.get_current_metrics()
+        #
         # 触发条件示例：
         # - 错误率 > 5%
         # - 每小时成本 > $50
@@ -1031,6 +1034,24 @@ def test_canary_deployment():
 #### 要求
 
 **6.1 生成 report.md（10 分）**
+
+生成一份完整的项目报告，展示你 8 周的学习成果。
+
+**必需章节**（必须包含）：
+- 项目概述
+- 技术架构（系统设计 + 核心模块）
+- 评估结果（效果指标 + 成本指标）
+- 商业价值
+- 项目演进
+
+**可选章节**（根据需要添加）：
+- 持续优化
+- 部署与运维
+- 文档
+- 团队与致谢
+- 许可证
+
+以下是一个完整的报告模板：
 
 ```markdown
 # TextAgent 项目终稿
