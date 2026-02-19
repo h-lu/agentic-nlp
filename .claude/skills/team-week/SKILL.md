@@ -26,7 +26,7 @@ python3 scripts/validate_week.py --week week_XX --mode release
 - 交付遵循 `CLAUDE.md` + `shared/style_guide.md`
 - **所有写正文的 subagent 必须先读 `shared/writing_exemplars.md` + `shared/characters.yml`**
 - **ANCHORS.yml 由阶段 6（收敛阶段）统一管理**：其他阶段如有 anchor 建议，在输出中标注即可，不直接写 ANCHORS.yml
-- **一致性处理由 Lead agent 直接执行**（不再调用独立 subagent）：阶段 6b 的术语同步、格式检查、ANCHORS 整理由 Lead agent 直接完成
+- **一致性处理由 consistency-editor 执行**：阶段 5 的术语同步、格式检查、角色一致性问题由 consistency-editor 完成
 
 ### 写作质量红线（四维评分体系）
 
@@ -220,19 +220,56 @@ python3 scripts/validate_week.py --week week_XX --mode idle
 
 ### 阶段 5：QA（前置：阶段 4 全部完成）
 
-调用 subagent `student-qa`：
+执行完整的三维度 QA 审读（与 `/qa-week` 共享相同流程）。
 
-- **只读审读**，返回四维评分 + 问题清单（通过 tool result 返回，不写文件）
-- 四维评分：叙事流畅度 / 趣味性 / 知识覆盖 / 认知负荷（各 1-5 分）
-- 总分 >= 18/20 才能通过
+#### 5a. 并行审读（一致性 + 技术正确性）
 
-**重要**：student-qa 是只读角色（tools: [Read, Grep, Glob]，无 Write 权限），**不要让它写 QA_REPORT.md**。它应该通过返回消息输出评分和清单。
+同时启动以下两个 agent（可并行）：
+
+1. **`consistency-editor`**：
+   - 修复格式/术语/角色一致性
+   - 同步 `TERMS.yml` -> `shared/glossary.yml`
+   - 检查循环角色使用（对照 `shared/characters.yml`）
+   - 修复 `ANCHORS.yml` 问题（依赖 `validate_week.py` 报错定位）
+   - **可直接修改文件**
+
+2. **`technical-reviewer`**：
+   - 审读概念/公式/代码/答案正确性
+   - 检查教学法对齐（目标/递进/示例-练习）
+   - 检查练习题质量（可评分/难度梯度）
+   - **只读，输出问题清单（含 S1-S4 Severity 分级）**
+
+#### 5b. 收集结果
+
+- 等待 5a 的两个 agent 完成
+- 收集 `technical-reviewer` 的问题清单（含 S1/S2 致命问题）
+
+#### 5c. 学生视角审读
+
+调用 **`student-qa`**：
+
+- **传入 technical-reviewer 发现的 S1/S2 问题摘要**
+- 基于修复后的文件进行审读
+- 输出四维评分（叙事流畅度/趣味性/知识覆盖/认知负荷）
+- 如有 S1 错误，在"知识覆盖"维度标注扣分原因
+- **只读，通过 tool result 返回评分和清单**
+
+**重要**：student-qa 是只读角色（tools: [Read, Grep, Glob]，无 Write 权限），**不要让它写 QA_REPORT.md**。
 
 **校验**：无（QA 是只读角色）
 
 ### 阶段 6：收敛（前置：阶段 5 完成，序列执行）
 
-#### 6a. 修订回路（简化版：2 档处理）
+#### 6a. 修订回路
+
+**优先处理 S1/S2 技术审读问题**：
+
+| 问题级别 | 处理方式 | 回传给谁 |
+|---------|---------|---------|
+| S1 致命 | 必须修复，否则不能 release | `chapter-writer` 或 `example-engineer`（视问题类型） |
+| S2 重要 | 强烈建议修复 | `prose-polisher` |
+
+**四维评分处理**：
 
 | 总分范围 | 处理方式 | 回传给谁 |
 |---------|---------|---------|
@@ -240,33 +277,64 @@ python3 scripts/validate_week.py --week week_XX --mode idle
 | < 18 | 结构性重写（需大幅改进） | `chapter-writer` |
 
 **修订规则说明**：
+- **S1 问题必须先于四维评分处理**：即使总分 >= 18，有 S1 问题也不能进入 release
 - 无论评分高低，每轮 QA 后都需根据反馈进行一轮修订（即使是 >= 18 分的建议项也要处理）
 - 修订后如无阻塞项且质量达标，即可进入 release
-- **硬性上限：最多迭代 3 轮。** 如果 3 轮后总分仍 < 18：
+- **硬性上限：最多迭代 3 轮。** 如果 3 轮后总分仍 < 18 或仍有 S1 问题：
 1. 在 QA_REPORT.md 记录当前评分和未解决问题
 2. 标注 `<!-- 需人工介入 -->`
 3. 继续推进到 6b（不再回传修订）
 
-#### 6b. 一致性处理 + 落盘 QA_REPORT + Release 校验
+#### 6b. 落盘 QA_REPORT + Release 校验
 
-**一致性处理（由 Lead agent 直接执行，不再调用独立 subagent）**：
-
-在最终 release 前，Lead agent 直接执行以下一致性检查：
-
-1. **术语同步**：检查 `TERMS.yml` → `shared/glossary.yml`，如有缺失则同步
-2. **ANCHORS.yml 整理**：确保锚点 ID 周内唯一，claim/evidence/verification 齐全
-3. **角色一致性**：快速检查循环角色使用是否符合 `shared/characters.yml` 人设
-4. **格式统一**：检查标题层级、代码块语言标签、列表格式等
+**一致性处理已在阶段 5a 由 consistency-editor 完成**，此处无需重复。
 
 **落盘 QA_REPORT（由 Lead agent 直接写入）**：
 
-- 把 student-qa 返回的 QA 结果写入 `chapters/week_XX/QA_REPORT.md`
-  - 四维评分写在顶部
-  - 阻塞项放到 `## 阻塞项` 下（checkbox，必须全部勾选）
-  - 建议项放到 `## 建议项` 下（checkbox）
-  - 如经过修订回路，记录每轮评分变化
+- 汇总阶段 5 的所有审读结果，写入 `chapters/week_XX/QA_REPORT.md`
+- 格式如下：
 
-**注意**：QA_REPORT.md 是在阶段 6b 由 Lead agent 写入的，不是在阶段 5 由 student-qa 写入的。student-qa 只返回评分和清单，不操作文件。
+```markdown
+# QA Report: week_XX
+
+## 四维评分
+
+| 维度 | 分数 | 说明 |
+|------|------|------|
+| 叙事流畅度 | X/5 | ... |
+| 趣味性 | X/5 | ... |
+| 知识覆盖 | X/5 | ... |
+| 认知负荷 | X/5 | ... |
+| **总分** | **XX/20** | |
+
+## 技术审读问题
+
+### S1 致命（必须修复）
+- [ ] {问题描述} — `CHAPTER.md#xxx`
+
+### S2 重要（强烈建议修复）
+- [ ] {问题描述} — `CHAPTER.md#xxx`
+
+## 阻塞项
+
+- [ ] {问题描述} — {位置}
+
+## 建议项
+
+- [ ] {问题描述} — {位置}
+
+## 教学法建议
+{technical-reviewer 的教学法建议}
+
+## 审读记录
+- consistency-editor: 已修复 X 处一致性问题
+- technical-reviewer: 发现 X 个问题（S1: X, S2: X, S3: X, S4: X）
+- student-qa: 四维评分 XX/20
+```
+
+**如有 S1/S2 问题**：
+- 标注需回传 `chapter-writer` 或 `prose-polisher` 修复
+- 修复后需重新运行阶段 5 的审读
 
 - 调用 subagent `error-fixer`（如果校验有报错）：逐条修复再验证
 
@@ -290,5 +358,6 @@ python3 scripts/validate_week.py --week week_XX --mode release
 ## 收敛规则
 
 - QA_REPORT 的"阻塞项"必须清零（不允许 `- [ ]`）才能 release
+- **S1 致命问题必须清零**才能 release
 - 四维评分总分必须 >= 18/20 才能 release（或 3 轮修订后人工豁免）
 - 不要为了"写完"牺牲可运行/可验证：tests/anchors/terms 要能对上

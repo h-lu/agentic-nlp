@@ -47,9 +47,6 @@ Thumbs.db
 # Serena
 .serena/
 
-# Claude Code
-.claude/
-
 # Research cache (optional, can be committed)
 # chapters/**/.research_cache.md
 
