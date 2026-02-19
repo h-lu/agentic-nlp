@@ -27,14 +27,13 @@ from pydantic import BaseModel, Field, field_validator
 
 class TicketClassification(BaseModel):
     """工单分类的输出格式"""
-    category: str = Field(description="工单分类：技术支持/账户问题/投诉建议/其他")
+    category: str = Field(description="工单分类：技术支持/账务问题/功能建议/投诉/其他")
     confidence: float = Field(ge=0.0, le=1.0, description="置信度 0-1")
     reasoning: Optional[str] = Field(default=None, description="分类理由（可选）")
 
     @field_validator('category')
-    @classmethod
     def validate_category(cls, v: str) -> str:
-        valid_categories = ['技术支持', '账户问题', '投诉建议', '其他']
+        valid_categories = ['技术支持', '账务问题', '功能建议', '投诉', '其他']
         if v not in valid_categories:
             raise ValueError(f'分类必须是以下之一: {valid_categories}')
         return v
@@ -47,7 +46,6 @@ class TicketSummary(BaseModel):
     urgency: str = Field(description="紧急程度：高/中/低")
 
     @field_validator('urgency')
-    @classmethod
     def validate_urgency(cls, v: str) -> str:
         valid_urgencies = ['高', '中', '低']
         if v not in valid_urgencies:
@@ -210,19 +208,24 @@ class FewShotManager:
         elif strategy == "sequential":
             return candidates[:count]
         elif strategy == "balanced":
-            # 按类别平衡选择
+            # 按类别平衡选择（改进版：确保不超过请求数量）
             categories = {}
             for ex in candidates:
                 cat = ex.category or "其他"
                 if cat not in categories:
                     categories[cat] = []
                 categories[cat].append(ex)
-            
+
             result = []
             per_category = max(1, count // len(categories))
             for cat_examples in categories.values():
-                result.extend(cat_examples[:per_category])
-            return result[:count]
+                # 确保不超过请求的总数量
+                remaining = count - len(result)
+                if remaining <= 0:
+                    break
+                take = min(per_category, remaining, len(cat_examples))
+                result.extend(cat_examples[:take])
+            return result
         
         return candidates[:count]
     

@@ -24,6 +24,7 @@ from pydantic import BaseModel, Field
 
 # 从 week_01 导入 LLM Client
 import sys
+# 注意：sys.path 操作仅用于开发环境，正式安装包后应使用正常的 import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '..', 'week_01', 'examples'))
 
@@ -137,26 +138,31 @@ def compare_prompts(input_text: str, client=None) -> dict:
     }
 
     if client and HAS_OPENAI:
-        # 使用 bad prompt
-        try:
-            result["bad_output"] = client.call(bad_prompt, "你是一个有帮助的助手。")
-        except Exception as e:
-            result["bad_output"] = f"[调用失败: {e}]"
+        # 检查 client 是否有 call 方法
+        if not hasattr(client, 'call'):
+            result["bad_output"] = "[错误：client 对象缺少 call 方法]"
+            result["good_output"] = "[错误：client 对象缺少 call 方法]"
+        else:
+            # 使用 bad prompt
+            try:
+                result["bad_output"] = client.call(bad_prompt, "你是一个有帮助的助手。")
+            except Exception as e:
+                result["bad_output"] = f"[调用失败: {e}]"
 
-        # 使用 good prompt
-        try:
-            system, user = PromptElements(
-                role="新闻分类助手",
-                task="判断以下新闻属于哪个类别",
-                constraints=[
-                    "只输出类别名称，不要解释原因",
-                    "如果不确定，选择最接近的类别",
-                ],
-                output_format="从以下选项中选一个：财经、科技、体育、娱乐"
-            ).render(input_text)
-            result["good_output"] = client.call(user, system)
-        except Exception as e:
-            result["good_output"] = f"[调用失败: {e}]"
+            # 使用 good prompt
+            try:
+                system, user = PromptElements(
+                    role="新闻分类助手",
+                    task="判断以下新闻属于哪个类别",
+                    constraints=[
+                        "只输出类别名称，不要解释原因",
+                        "如果不确定，选择最接近的类别",
+                    ],
+                    output_format="从以下选项中选一个：财经、科技、体育、娱乐"
+                ).render(input_text)
+                result["good_output"] = client.call(user, system)
+            except Exception as e:
+                result["good_output"] = f"[调用失败: {e}]"
 
     return result
 

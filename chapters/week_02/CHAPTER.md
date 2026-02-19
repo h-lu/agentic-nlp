@@ -368,7 +368,9 @@ Week 02 必须回顾 Week 01 的至少 2 个概念：
 
 上周我们用 JSON Mode 保证输出是合法的 JSON，这周我们从 Prompt 层面进一步约束——告诉 LLM 具体的字段名、类型、嵌套结构。两者配合使用效果最好：JSON Mode 确保"语法正确"，Prompt 约束确保"内容正确"。
 
-现在你有了四要素框架。但还有一个问题：即使 Prompt 写得很清楚，LLM 的输出有时候还是会"飘"——这次给你"财经"，下次给你"财经新闻"，再下次给你"这篇文章属于财经类"。下一节我们来看怎么用 Few-shot 示例稳定输出。
+现在你有了四要素框架。这一节你做的不是"背诵四要素"，而是学会了**把模糊意图翻译成 LLM 能听懂的指令**：角色设定行为边界，任务明确目标，约束防止过度输出，格式确保可解析。小北的三个踩坑现场——动词太宽泛、缺边界约束、格式不明确——你以后大概率能避开。
+
+但还有一个问题：即使 Prompt 写得很清楚，LLM 的输出有时候还是会"飘"——这次给你"财经"，下次给你"财经新闻"，再下次给你"这篇文章属于财经类"。下一节我们来看怎么用 Few-shot 示例稳定输出。
 
 > **AI 时代小专栏：Prompt Engineering 从"玄学"到"工程"—— 2024-2025 的方法论演进**
 >
@@ -378,9 +380,9 @@ Week 02 必须回顾 Week 01 的至少 2 个概念：
 >
 > 这意味着什么？意味着你正在学的不是"技巧"，而是一套正在工程化的方法论。它在变成熟，也在变标准。
 >
-> 参考（访问日期：2026-02-16）：
-> - OpenAI Prompt Engineering 官方指南: https://developers.openai.com/api/docs/guides/prompt-engineering/
-> - Microsoft Azure OpenAI 官方文档（2025年12月更新）: https://learn.microsoft.com/en-us/azure/ai-foundry/openai/concepts/prompt-engineering
+> 参考（访问日期：2026-02-19）：
+> - OpenAI Prompt Engineering 官方指南: https://platform.openai.com/docs/guides/prompt-engineering
+> - Microsoft Azure OpenAI 官方文档（2025年12月更新）: https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/prompt-engineering
 > - 企业级 Prompt 管理工具对比（Arize AI, 2025年11月）: https://arize.com/blog/top-5-ai-prompt-management-tools-of-2025/
 > - Prompting Guide 社区资源: https://www.promptingguide.ai/
 
@@ -620,7 +622,7 @@ Let's think step by step.
 >
 > 这意味着什么？意味着 CoT 从"你需要手动触发"变成了"模型内置能力"。当你使用推理模型时，不需要特意写"Let's think step by step"——它自己会想。但普通模型仍然需要你显式地引导。所以你刚学的 CoT 技巧，在 AI 时代不但没过时，反而更重要了——它帮你理解"模型是怎么想的"。
 >
-> 参考（访问日期：2026-02-16）：
+> 参考（访问日期：2026-02-19）：
 > - OpenAI o1 官方介绍: https://openai.com/index/learning-to-reason-with-llms/
 > - DeepSeek-R1 GitHub 仓库: https://github.com/deepseek-ai/DeepSeek-R1
 > - DeepSeek-R1 论文 "Incentivizing Reasoning Capability in LLMs": https://arxiv.org/pdf/2501.12948
@@ -632,11 +634,26 @@ Let's think step by step.
 
 ### 用 Pydantic 定义数据结构
 
-在开始评估之前，我们需要一个可靠的方式来定义测试用例和评估结果。这周我们使用 **Pydantic** 来做这件事，而不是 Python 标准库的 `dataclasses`。
+在开始评估之前，我们需要一个可靠的方式来定义测试用例和评估结果。
 
-为什么在 LLM 应用中更推荐 Pydantic？
+小北最近刚踩过一个坑。他用 `dataclasses` 定义了一个评估结果类：
 
-**LLM 的输出不可靠**——它可能说"置信度 0.95"，实际输出"0.95"（字符串）而不是 0.95（浮点数）。Pydantic 会在运行时自动做类型转换和验证，而 `dataclasses` 只是"类型提示"，运行时不会检查。
+```python
+from dataclasses import dataclass
+
+@dataclass
+class EvalResult:
+    accuracy: float
+    format_compliance: float
+```
+
+跑完评估后，他兴冲冲地去看结果——结果程序在计算平均值的时候崩溃了。原来 LLM 输出的准确率是字符串 `"88%"` 而不是浮点数 `0.88`，`dataclasses` 默认不做运行时类型检查，默默接受了这个字符串，直到后续代码尝试计算时才爆炸。
+
+"为什么 Python 不帮我拦住这个问题？"小北一脸委屈。
+
+老潘看了一眼代码："Python 的哲学是'显式优于隐式'，但在处理 LLM 这种'不可靠输入'时，你需要更严格的数据验证。试试 Pydantic。"
+
+**Pydantic** 的核心价值就在这里：它**不只是类型提示，而是真正的运行时验证**。当 LLM 输出"0.95"（字符串）时，Pydantic 会自动把它转成 `0.95`（浮点数）；当 LLM 输出 `1.5`（超出范围）时，Pydantic 会直接报错——问题在入口就被拦住了，而不是等到某个奇怪的地方崩溃。
 
 ```python
 from dataclasses import dataclass
@@ -645,7 +662,7 @@ from pydantic import BaseModel, Field
 # dataclasses：类型只是"提示"，运行时不检查
 @dataclass
 class ResultDC:
-    accuracy: float  # 传入 "0.95"（字符串）不会报错，但后续计算可能出错
+    accuracy: float  # 传入 "0.95"（字符串）不会报错，但后续计算时报 TypeError
 
 # Pydantic：运行时会验证和转换
 class ResultPD(BaseModel):
@@ -733,6 +750,13 @@ print(f"准确率: {acc:.1%}")
 
 #### 完整版：加上更多指标
 
+> 💡 **阅读提示**：下面的完整版代码较长，涉及 Pydantic 数据结构、多指标计算、错误处理等多个概念。如果你是第一次接触，建议先关注：
+> 1. `TestCase` 和 `EvalResult` 这两个数据结构"长什么样"
+> 2. `evaluate_prompt` 函数的输入输出是什么
+> 3. 最后的对比表格是怎么生成的
+>
+> 具体实现细节可以等实际使用时再细读。
+
 当你需要更细的指标（格式合规率、延迟、Token 消耗）时，可以升级到完整版：
 
 ```python
@@ -793,7 +817,11 @@ def evaluate_prompt(
             # 记录结束时间
             latency = (time.time() - start) * 1000  # ms
             total_latency += latency
-            total_tokens += client.last_usage.total_tokens
+            # 注意：这里假设 client 有 last_usage 属性
+            # 实际实现中，你可能需要从 client.response.usage 获取
+            # 或者在调用时让 client 返回 usage 信息
+            if hasattr(client, 'last_usage') and client.last_usage:
+                total_tokens += client.last_usage.total_tokens
 
             # 检查正确性
             if parsed == case.expected_output:
@@ -915,6 +943,59 @@ print(f"{'总 Token 消耗':<20} {result_v1.total_tokens:>10} {result_v2.total_t
 
 老潘补充："在公司里，我们还会做 A/B 测试——让新旧 Prompt 同时处理线上流量，看真实业务指标的变化。这比离线测试集更可靠，但成本也更高。"
 
+### 常见评估误区
+
+除了过拟合，还有几个评估时的常见坑：
+
+**误区一：只看准确率，不看错误分布**
+
+准确率 85% 听起来不错。但如果 15% 的错误全都集中在"投诉"这一类——可能占了投诉类工单的 50%——那问题就严重了。投诉处理不当会直接导致用户流失。
+
+```python
+# 错误分析：不只是数错了多少，还要看错在哪
+def analyze_errors(eval_result: EvalResult) -> dict:
+    """按类别统计错误分布"""
+    from collections import defaultdict
+    errors_by_category = defaultdict(lambda: {"wrong": 0})
+
+    # 第一步：遍历所有错误案例，按类别统计
+    for case in eval_result.error_cases:
+        expected = case.get("expected", "")
+        if isinstance(expected, str):
+            # 假设 expected 就是分类名称（如"技术支持"、"账务问题"）
+            category = expected
+            errors_by_category[category]["wrong"] += 1
+
+    # 第二步：计算每个类别的错误占比
+    total_errors = len(eval_result.error_cases)
+    return {
+        cat: data["wrong"] / total_errors if total_errors > 0 else 0
+        for cat, data in errors_by_category.items()
+    }
+```
+
+**误区二：测试集太小，结论不可靠**
+
+只有 10 条测试用例，准确率从 70% 涨到 90%——这可能是随机波动。统计学上，10 条样本的置信区间很宽，这个"提升"可能只是运气。
+
+经验法则：
+- **20-50 条**：初步判断，能看到明显问题
+- **100-200 条**：比较可靠的对比
+- **500+ 条**：可以做精细分析
+
+**误区三：忽视基线对比**
+
+你的 Prompt 准确率 85%，是好是坏？没有基线就没法判断。
+
+常见的基线：
+- **随机基线**：瞎猜的准确率（比如 4 分类任务是 25%）
+- **规则基线**：简单的 if-else 规则能到多少
+- **旧版基线**：之前的 Prompt 版本
+
+小北恍然大悟："所以 85% 相比随机基线的 25% 是巨大提升，但如果规则基线已经 80% 了，那就是'费大力气提升 5 个点'？"
+
+"对。"老潘点头，"这就是为什么我们说'没有基线的评估是耍流氓'。"
+
 ## 第 5 节：Prompt Engineering 的边界 —— 什么能做，什么不能做
 
 学了这么多 Prompt 技巧，你可能开始觉得：只要 Prompt 写得好，LLM 什么都能做。
@@ -963,6 +1044,24 @@ print(f"{'总 Token 消耗':<20} {result_v1.total_tokens:>10} {result_v2.total_t
 
 Prompt Engineering 是一个工具，不是万能药。知道工具的边界，比掌握工具的技巧更重要。
 
+### 下周预告：当 Prompt 遇到知识库
+
+小北问了一个老潘没法用 Prompt 解决的问题："老板让我做一个'智能客服'，要能回答产品规格、保修政策、退换货流程——这些信息都在公司内部文档里，几百页呢。我怎么把它们塞进 Prompt？"
+
+老潘摇摇头："塞不进去的。Prompt 有长度限制，而且这些文档天天变，你不可能每次都改 Prompt。"
+
+"那怎么办？"
+
+"下周我们学 RAG——检索增强生成。"老潘说，"简单说，就是把文档切成小块存起来，用户提问时先搜出相关的内容，再把这些内容喂给 LLM。这样 LLM 就能'看见'你的知识库了。"
+
+"这和直接把文档贴给 LLM 有什么区别？"
+
+"区别大了。"老潘掰着手指数，"第一，文档太长 LLM 会'忘'前面的内容；第二，每次都传完整文档 Token 成本爆炸；第三，文档更新了你得改 Prompt——RAG 这些问题都能解决。"
+
+阿码插嘴："所以 RAG 是 Prompt Engineering 的升级版？"
+
+"不是升级，是组合。"老潘纠正，"RAG 里仍然要用 Prompt——告诉 LLM'这是检索到的内容，请基于这些内容回答'。你现在学的 Prompt 技巧，下周全用得上。"
+
 <!--
 ================================================================================
 【TextAgent 进度】
@@ -998,10 +1097,11 @@ class PromptTemplate(BaseModel):
         """渲染 Prompt"""
         parts = [f"角色：{self.role}"]
 
-        # 添加 Few-shot 示例
-        if examples or self.few_shot_examples:
+        # 添加 Few-shot 示例（合并传入的 examples 和模板中的 few_shot_examples）
+        merged_examples = (self.few_shot_examples or []) + (examples or [])
+        if merged_examples:
             parts.append("\n示例：")
-            for ex in (examples or self.few_shot_examples):
+            for ex in merged_examples:
                 parts.append(f"输入：\"{ex['input']}\"")
                 parts.append(f"输出：{ex['output']}")
             parts.append("")

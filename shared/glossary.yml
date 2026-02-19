@@ -1,365 +1,285 @@
-# 全书术语表（term_zh 唯一）
-#
-# 约定：
-# - term_zh 是校验脚本的主键
-# - term_en 可选
-# - definition_zh 必填（尽量一句话说明清楚）
-# - first_seen 必须是 week_01..week_08 之一
-
-- term_zh: TextAgent
+- definition_zh: 本书贯穿项目的代号：一个 Agentic 文本分析系统，每周增量迭代，最终交付可部署的智能应用。
+  first_seen: week_01
   term_en: TextAgent
-  definition_zh: 本书贯穿项目的代号：一个 Agentic 文本分析系统，每周增量迭代，最终交付可部署的智能应用。
+  term_zh: TextAgent
+- definition_zh: 大型语言模型，在海量文本上训练的深度学习模型，能够理解和生成自然语言，如 GPT、Claude、Llama。
   first_seen: week_01
-
-# ─── Week 01 ───
-- term_zh: LLM
   term_en: Large Language Model
-  definition_zh: 大型语言模型，在海量文本上训练的深度学习模型，能够理解和生成自然语言，如 GPT、Claude、Llama。
+  term_zh: LLM
+- definition_zh: LLM 处理文本的基本单位。英文约 4 个字符 = 1 Token（即 1 Token ≈ 0.75 个英文单词）；中文约 1.5-2
+    个汉字 = 1 Token（即 Token 数 ≈ 字数 ÷ 1.5~2）。LLM 按 Token 计费。
   first_seen: week_01
-
-- term_zh: Token
   term_en: Token
-  definition_zh: LLM 处理文本的基本单位。英文约 4 个字符 = 1 Token（即 1 Token ≈ 0.75 个英文单词）；中文约 1.5-2 个汉字 = 1 Token（即 Token 数 ≈ 字数 ÷ 1.5~2）。LLM 按 Token 计费。
+  term_zh: Token
+- definition_zh: OpenAI 等提供的对话式 API 接口，以消息列表为输入，返回模型生成的回复。
   first_seen: week_01
-
-- term_zh: Chat Completions API
   term_en: Chat Completions API
-  definition_zh: OpenAI 等提供的对话式 API 接口，以消息列表为输入，返回模型生成的回复。
+  term_zh: Chat Completions API
+- definition_zh: 让 LLM 输出符合特定格式（如 JSON Schema）的技术，通过 JSON Mode 或 Function Calling
+    实现。
   first_seen: week_01
-
-- term_zh: 结构化输出
   term_en: Structured Output
-  definition_zh: 让 LLM 输出符合特定格式（如 JSON Schema）的技术，通过 JSON Mode 或 Function Calling 实现。
+  term_zh: 结构化输出
+- definition_zh: 从"训练模型"到"调用 API"的思维方式变化。传统方法需要收集数据、训练、部署；LLM 方法只需要设计 Prompt、调用 API。
   first_seen: week_01
-
-- term_zh: 范式转变
   term_en: Paradigm Shift
-  definition_zh: 从"训练模型"到"调用 API"的思维方式变化。传统方法需要收集数据、训练、部署；LLM 方法只需要设计 Prompt、调用 API。
+  term_zh: 范式转变
+- definition_zh: 统一的 LLM 调用接口设计模式。封装了 API Key 管理、错误处理、日志记录等功能，支持多后端切换。
   first_seen: week_01
-
-- term_zh: API 封装
   term_en: API Wrapper
-  definition_zh: 统一的 LLM 调用接口设计模式。封装了 API Key 管理、错误处理、日志记录等功能，支持多后端切换。
-  first_seen: week_01
-
-# ─── Week 02 ───
-- term_zh: Prompt Engineering
+  term_zh: API 封装
+- definition_zh: 设计和优化输入给 LLM 的提示词的技术，目标是让模型产生准确、一致的输出。
+  first_seen: week_02
   term_en: Prompt Engineering
-  definition_zh: 设计和优化输入给 LLM 的提示词的技术，目标是让模型产生准确、一致的输出。
+  term_zh: Prompt Engineering
+- definition_zh: 不提供任何示例，直接让 LLM 完成任务的方式。
   first_seen: week_02
-
-- term_zh: Zero-shot
   term_en: Zero-shot
-  definition_zh: 不提供任何示例，直接让 LLM 完成任务的方式。
+  term_zh: Zero-shot
+- definition_zh: 在 Prompt 中提供少量示例（通常 3-5 个），引导 LLM 按照期望的格式和风格输出的技术。
   first_seen: week_02
-
-- term_zh: Few-shot
-  term_en: Few-shot
-  definition_zh: 在 Prompt 中提供少量示例，让 LLM 学习任务模式的方式。
-  first_seen: week_02
-
-- term_zh: Few-shot Learning
   term_en: Few-shot Learning
-  definition_zh: 在 Prompt 中提供少量示例（通常 3-5 个），引导 LLM 按照期望的格式和风格输出的技术。
+  term_zh: Few-shot Learning
+- definition_zh: 思维链，让 LLM 展示推理过程的技术，通过"Let's think step by step"等引导语实现。
   first_seen: week_02
-
-- term_zh: Chain-of-Thought
   term_en: Chain-of-Thought (CoT)
-  definition_zh: 思维链，让 LLM 展示推理过程的技术，通过"Let's think step by step"等引导语实现。
+  term_zh: Chain-of-Thought
+- definition_zh: 使用一个 LLM 来评估另一个 LLM 输出质量的方法。
   first_seen: week_02
-
-- term_zh: LLM-as-Judge
   term_en: LLM-as-Judge
-  definition_zh: 使用一个 LLM 来评估另一个 LLM 输出质量的方法。
+  term_zh: LLM-as-Judge
+- definition_zh: 设计有效 Prompt 的四个核心要素：角色（Role）、任务（Task）、约束（Constraints）、格式（Format）。四要素框架帮助开发者构建清晰、无歧义的指令。
   first_seen: week_02
-
-- term_zh: Prompt 设计原则
   term_en: Prompt Design Principles
-  definition_zh: 设计有效 Prompt 的四个核心要素：角色（Role）、任务（Task）、约束（Constraints）、格式（Format）。
+  term_zh: Prompt 设计原则
+- definition_zh: 系统化评估 Prompt 效果的方法论，包括构建测试集、定义评估指标、进行版本对比。
   first_seen: week_02
-
-- term_zh: Prompt 评估
   term_en: Prompt Evaluation
-  definition_zh: 系统化评估 Prompt 效果的方法论，包括构建测试集、定义评估指标、进行版本对比。
-  first_seen: week_02
-
-# ─── Week 03 ───
-- term_zh: RAG
+  term_zh: Prompt 评估
+- definition_zh: 检索增强生成，先从知识库检索相关文档，再将检索结果作为上下文输入 LLM 生成回答的技术。
+  first_seen: week_03
   term_en: Retrieval-Augmented Generation
-  definition_zh: 检索增强生成，先从知识库检索相关文档，再将检索结果作为上下文输入 LLM 生成回答的技术。
+  term_zh: RAG
+- definition_zh: 文本嵌入，将文本转换为高维向量的过程，语义相似的文本在向量空间中距离较近。
   first_seen: week_03
-
-- term_zh: Embedding
   term_en: Embedding
-  definition_zh: 文本嵌入，将文本转换为高维向量的过程，语义相似的文本在向量空间中距离较近。
+  term_zh: Embedding
+- definition_zh: 专门存储和检索向量数据的数据库，支持向量相似度搜索，如 ChromaDB、FAISS、Milvus。
   first_seen: week_03
-
-- term_zh: 向量数据库
   term_en: Vector Database
-  definition_zh: 专门存储和检索向量数据的数据库，支持向量相似度搜索，如 ChromaDB、FAISS、Milvus。
+  term_zh: 向量数据库
+- definition_zh: 将长文档切分成较小片段的过程，是 RAG 系统的关键预处理步骤。
   first_seen: week_03
-
-- term_zh: 文本切分
   term_en: Text Chunking
-  definition_zh: 将长文档切分成较小片段的过程，是 RAG 系统的关键预处理步骤。
+  term_zh: 文本切分
+- definition_zh: LLM 生成看似合理但实际不正确或不存在的信息的现象。RAG 是缓解幻觉的主要方法之一。
   first_seen: week_03
-
-- term_zh: 幻觉
   term_en: Hallucination
-  definition_zh: LLM 生成看似合理但实际不正确或不存在的信息的现象。RAG 是缓解幻觉的主要方法之一。
-  first_seen: week_03
-
-# ─── Week 04 ───
-- term_zh: 混合检索
+  term_zh: 幻觉
+- definition_zh: 结合向量检索（语义相似）和关键词检索（BM25 精确匹配）的检索策略，通过 RRF 等算法融合结果。
+  first_seen: week_04
   term_en: Hybrid Search
-  definition_zh: 结合向量检索（语义相似）和关键词检索（BM25 精确匹配）的检索策略，通过 RRF 等算法融合结果。
+  term_zh: 混合检索
+- definition_zh: 经典的关键词检索算法，基于词频（TF）和逆文档频率（IDF）计算文档相关性分数，擅长精确匹配。
   first_seen: week_04
-
-- term_zh: BM25
   term_en: BM25 (Best Matching 25)
-  definition_zh: 经典的关键词检索算法，基于词频（TF）和逆文档频率（IDF）计算文档相关性分数，擅长精确匹配。
+  term_zh: BM25
+- definition_zh: 倒数排名融合算法，用于合并多个检索系统的结果。公式：score = Σ(1 / (k + rank))，k 通常取 60。
   first_seen: week_04
-
-- term_zh: RRF
   term_en: Reciprocal Rank Fusion
-  definition_zh: 倒数排名融合算法，用于合并多个检索系统的结果。公式：score = Σ(1 / (k + rank))，k 通常取 60。
+  term_zh: RRF
+- definition_zh: 对检索结果进行二次排序的技术，使用更精确但更慢的模型（如 Cross-Encoder）提升 Top-K 结果的相关性。
   first_seen: week_04
-
-- term_zh: 重排序
   term_en: Re-ranking
-  definition_zh: 对检索结果进行二次排序的技术，使用更精确但更慢的模型（如 Cross-Encoder）提升 Top-K 结果的相关性。
+  term_zh: 重排序
+- definition_zh: 一种同时编码查询和文档的模型架构，能精确计算相关性但计算成本高，适合对少量候选文档进行重排序。
   first_seen: week_04
-
-- term_zh: Cross-Encoder
   term_en: Cross-Encoder
-  definition_zh: 一种同时编码查询和文档的模型架构，能精确计算相关性但计算成本高，适合对少量候选文档进行重排序。
+  term_zh: Cross-Encoder
+- definition_zh: 一种分别编码查询和文档的模型架构，生成向量后计算相似度，速度快但精度略低，适合大规模检索。
   first_seen: week_04
-
-- term_zh: Bi-Encoder
   term_en: Bi-Encoder
-  definition_zh: 一种分别编码查询和文档的模型架构，生成向量后计算相似度，速度快但精度略低，适合大规模检索。
+  term_zh: Bi-Encoder
+- definition_zh: 使用 LLM 改写用户查询，使其更适合检索的技术，包括查询扩展、查询简化、同义词替换等。
   first_seen: week_04
-
-- term_zh: 查询重写
   term_en: Query Rewriting
-  definition_zh: 使用 LLM 改写用户查询，使其更适合检索的技术，包括查询扩展、查询简化、同义词替换等。
+  term_zh: 查询重写
+- definition_zh: 将单个用户查询扩展为多个语义相关的变体，以覆盖更多可能的相关文档。
   first_seen: week_04
-
-- term_zh: 查询扩展
   term_en: Query Expansion
-  definition_zh: 将单个用户查询扩展为多个语义相关的变体，以覆盖更多可能的相关文档。
+  term_zh: 查询扩展
+- definition_zh: RAG 评估框架，提供忠实度（faithfulness）、答案相关性（answer relevancy）、上下文精确度（context
+    precision）等指标。
   first_seen: week_04
-
-- term_zh: RAGAS
   term_en: RAGAS (Retrieval Augmented Generation Assessment)
-  definition_zh: RAG 评估框架，提供忠实度（faithfulness）、答案相关性（answer relevancy）、上下文精确度（context precision）等指标。
+  term_zh: RAGAS
+- definition_zh: RAGAS 指标之一，衡量 LLM 生成的答案是否完全基于检索到的上下文，而非编造信息。
   first_seen: week_04
-
-- term_zh: 忠实度
   term_en: Faithfulness
-  definition_zh: RAGAS 指标之一，衡量 LLM 生成的答案是否完全基于检索到的上下文，而非编造信息。
+  term_zh: 忠实度
+- definition_zh: RAGAS 指标之一，衡量答案与用户问题的相关程度，通过反向生成问题来评估。
   first_seen: week_04
-
-- term_zh: 答案相关性
   term_en: Answer Relevancy
-  definition_zh: RAGAS 指标之一，衡量答案与用户问题的相关程度，通过反向生成问题来评估。
+  term_zh: 答案相关性
+- definition_zh: RAGAS 指标之一，衡量检索到的上下文中有多少内容与问题相关，反映检索质量。
   first_seen: week_04
-
-- term_zh: 上下文精确度
   term_en: Context Precision
-  definition_zh: RAGAS 指标之一，衡量检索到的上下文中有多少内容与问题相关，反映检索质量。
+  term_zh: 上下文精确度
+- definition_zh: 检索评估指标，衡量前 K 个检索结果中包含了多少个相关文档。
   first_seen: week_04
-
-- term_zh: Recall@K
   term_en: Recall@K
-  definition_zh: 检索评估指标，衡量前 K 个检索结果中包含了多少个相关文档。
+  term_zh: Recall@K
+- definition_zh: 检索评估指标，衡量第一个相关文档在结果列表中的平均排名位置。
   first_seen: week_04
-
-- term_zh: MRR
   term_en: Mean Reciprocal Rank
-  definition_zh: 检索评估指标，衡量第一个相关文档在结果列表中的平均排名位置。
+  term_zh: MRR
+- definition_zh: 检索评估指标，综合考虑相关文档的排名位置和相关程度，是更全面的检索质量度量。
   first_seen: week_04
-
-- term_zh: NDCG
   term_en: Normalized Discounted Cumulative Gain
-  definition_zh: 检索评估指标，综合考虑相关文档的排名位置和相关程度，是更全面的检索质量度量。
-  first_seen: week_04
-
-# ─── Week 05 ───
-- term_zh: Agent
+  term_zh: NDCG
+- definition_zh: 能够自主规划、调用工具、执行任务的 LLM 系统，从"回答问题"进化为"解决问题"。
+  first_seen: week_05
   term_en: LLM Agent
-  definition_zh: 能够自主规划、调用工具、执行任务的 LLM 系统，从"回答问题"进化为"解决问题"。
+  term_zh: Agent
+- definition_zh: Agent 的四大核心能力：感知（理解用户目标）、规划（拆解任务）、执行（调用工具）、反思（调整策略）。与 Chatbot 的本质区别在于
+    Agent 能主动规划和执行多步骤任务。
   first_seen: week_05
-
-- term_zh: Agent 架构
   term_en: Agent Architecture
-  definition_zh: Agent 的四大核心能力：感知（理解用户目标）、规划（拆解任务）、执行（调用工具）、反思（调整策略）。与 Chatbot 的本质区别在于 Agent 能主动规划和执行多步骤任务。
+  term_zh: Agent 架构
+- definition_zh: 让 LLM 返回结构化的"工具调用指令"而非自然语言答案的能力。LLM 只决定"调用什么工具、传什么参数"，由系统执行工具，确保安全可控。
   first_seen: week_05
-
-- term_zh: Function Calling
   term_en: Function Calling
-  definition_zh: 让 LLM 返回结构化的"工具调用指令"而非自然语言答案的能力。LLM 只决定"调用什么工具、传什么参数"，由系统执行工具，确保安全可控。
+  term_zh: Function Calling
+- definition_zh: Reasoning + Acting，一种 Agent 模式，交替进行推理（Thought）和行动（Action）。
   first_seen: week_05
-
-- term_zh: ReAct
   term_en: ReAct
-  definition_zh: Reasoning + Acting，一种 Agent 模式，交替进行推理（Thought）和行动（Action）。
+  term_zh: ReAct
+- definition_zh: Reasoning + Acting 模式，让 Agent 交替进行推理（Thought）和行动（Action），观察结果（Observation）后继续循环，直到完成任务。本质上是
+    Chain-of-Thought + 工具调用。
   first_seen: week_05
-
-- term_zh: ReAct 模式
   term_en: ReAct Pattern
-  definition_zh: Reasoning + Acting 模式，让 Agent 交替进行推理（Thought）和行动（Action），观察结果（Observation）后继续循环，直到完成任务。本质上是 Chain-of-Thought + 工具调用。
+  term_zh: ReAct 模式
+- definition_zh: Agent 调用外部工具（如搜索、计算器、API）来完成任务的机制。
   first_seen: week_05
-
-- term_zh: 工具调用
   term_en: Tool Use
-  definition_zh: Agent 调用外部工具（如搜索、计算器、API）来完成任务的机制。
+  term_zh: 工具调用
+- definition_zh: 将复杂任务拆解为可执行的子步骤。常用 Few-shot 示例教 LLM 学会规划，生成带依赖关系的步骤列表，然后按顺序执行。
   first_seen: week_05
-
-- term_zh: 任务分解
   term_en: Task Decomposition
-  definition_zh: 将复杂任务拆解为可执行的子步骤。常用 Few-shot 示例教 LLM 学会规划，生成带依赖关系的步骤列表，然后按顺序执行。
+  term_zh: 任务分解
+- definition_zh: 用 JSON Schema 描述工具的能力，包括工具名称、功能描述、参数类型和约束。工具描述的清晰度直接影响 LLM 的调用准确性。
   first_seen: week_05
-
-- term_zh: 工具定义
   term_en: Tool Definition
-  definition_zh: 用 JSON Schema 描述工具的能力，包括工具名称、功能描述、参数类型和约束。工具描述的清晰度直接影响 LLM 的调用准确性。
-  first_seen: week_05
-
-# ─── Week 06 ───
-- term_zh: 多智能体系统
+  term_zh: 工具定义
+- definition_zh: 多个 Agent 协作完成复杂任务的系统，每个 Agent 扮演特定角色。
+  first_seen: week_06
   term_en: Multi-Agent System
-  definition_zh: 多个 Agent 协作完成复杂任务的系统，每个 Agent 扮演特定角色。
+  term_zh: 多智能体系统
+- definition_zh: Agent 主动控制检索过程的 RAG 系统，可以自主决定何时检索、检索什么、如何使用检索结果。
   first_seen: week_06
-
-- term_zh: Agentic RAG
   term_en: Agentic RAG
-  definition_zh: Agent 主动控制检索过程的 RAG 系统，可以自主决定何时检索、检索什么、如何使用检索结果。
+  term_zh: Agentic RAG
+- definition_zh: 人工介入的 AI 系统设计，在关键决策点引入人工审核或确认。
   first_seen: week_06
-
-- term_zh: Human-in-the-Loop
   term_en: Human-in-the-Loop
-  definition_zh: 人工介入的 AI 系统设计，在关键决策点引入人工审核或确认。
+  term_zh: Human-in-the-Loop
+- definition_zh: 微软开发的多智能体框架，支持 Agent 之间的对话式协作。
   first_seen: week_06
-
-- term_zh: AutoGen
   term_en: AutoGen
-  definition_zh: 微软开发的多智能体框架，支持 Agent 之间的对话式协作。
+  term_zh: AutoGen
+- definition_zh: 多个 Agent 协作的方式，常见的有顺序执行、并行执行、层级调度。
   first_seen: week_06
-
-- term_zh: Agent 协作模式
   term_en: Agent Collaboration Pattern
-  definition_zh: 多个 Agent 协作的方式，常见的有顺序执行、并行执行、层级调度。
+  term_zh: Agent 协作模式
+- definition_zh: 一种常见的多 Agent 架构，规划者负责任务分解，执行者负责具体执行。
   first_seen: week_06
-
-- term_zh: 规划者-执行者模式
   term_en: Planner-Executor Pattern
-  definition_zh: 一种常见的多 Agent 架构，规划者负责任务分解，执行者负责具体执行。
+  term_zh: 规划者-执行者模式
+- definition_zh: 多 Agent 系统中 Agent 之间交换信息的机制，包括消息传递和共享状态。
   first_seen: week_06
-
-- term_zh: Agent 通信
   term_en: Agent Communication
-  definition_zh: 多 Agent 系统中 Agent 之间交换信息的机制，包括消息传递和共享状态。
+  term_zh: Agent 通信
+- definition_zh: Agentic RAG 中 Agent 选择如何检索的方式，如向量检索、关键词检索、混合检索。
   first_seen: week_06
-
-- term_zh: 检索策略
   term_en: Retrieval Strategy
-  definition_zh: Agentic RAG 中 Agent 选择如何检索的方式，如向量检索、关键词检索、混合检索。
-  first_seen: week_06
-
-# ─── Week 07 ───
-- term_zh: LLM 应用评估
+  term_zh: 检索策略
+- definition_zh: 从效果、成本、延迟多维度评估 LLM 应用质量的体系，包括忠实度、相关性、Token 成本、响应时间等指标。
+  first_seen: week_07
   term_en: LLM Application Evaluation
-  definition_zh: 从效果、成本、延迟多维度评估 LLM 应用质量的体系，包括忠实度、相关性、Token 成本、响应时间等指标。
+  term_zh: LLM 应用评估
+- definition_zh: 通过模型选择、Prompt 精简、缓存策略等手段降低 LLM 应用成本的技术。
   first_seen: week_07
-
-- term_zh: 成本优化
   term_en: Cost Optimization
-  definition_zh: 通过模型选择、Prompt 精简、缓存策略等手段降低 LLM 应用成本的技术。
+  term_zh: 成本优化
+- definition_zh: 通过日志、指标、Trace 三大支柱全面监控 LLM 应用运行状态的能力，支持问题定位和性能分析。
   first_seen: week_07
-
-- term_zh: 可观测性
   term_en: Observability
-  definition_zh: 通过日志、指标、Trace 三大支柱全面监控 LLM 应用运行状态的能力，支持问题定位和性能分析。
+  term_zh: 可观测性
+- definition_zh: 将 LLM 应用从本地脚本转化为生产级服务的过程，包括 API 部署、容器化、监控告警等。
   first_seen: week_07
-
-- term_zh: 部署实践
   term_en: Deployment Practices
-  definition_zh: 将 LLM 应用从本地脚本转化为生产级服务的过程，包括 API 部署、容器化、监控告警等。
+  term_zh: 部署实践
+- definition_zh: LangChain 提供的 LLM 应用开发平台，支持调试、测试、评估和监控。
   first_seen: week_07
-
-- term_zh: LangSmith
   term_en: LangSmith
-  definition_zh: LangChain 提供的 LLM 应用开发平台，支持调试、测试、评估和监控。
+  term_zh: LangSmith
+- definition_zh: LLM 逐 Token 返回生成内容的方式，可以降低用户感知的延迟。
   first_seen: week_07
-
-- term_zh: 流式输出
   term_en: Streaming
-  definition_zh: LLM 逐 Token 返回生成内容的方式，可以降低用户感知的延迟。
+  term_zh: 流式输出
+- definition_zh: 降低模型参数精度的技术（如 FP16 → INT8），用于减少模型大小和推理延迟。
   first_seen: week_07
-
-- term_zh: 模型量化
   term_en: Model Quantization
-  definition_zh: 降低模型参数精度的技术（如 FP16 → INT8），用于减少模型大小和推理延迟。
-  first_seen: week_07
-
-# ─── Week 08 ───
-- term_zh: 端到端系统
+  term_zh: 模型量化
+- definition_zh: 从用户输入到最终输出的完整系统，整合 LLM、RAG、Agent、评估、部署等所有组件。
+  first_seen: week_08
   term_en: End-to-End System
-  definition_zh: 从用户输入到最终输出的完整系统，整合 LLM、RAG、Agent、评估、部署等所有组件。
+  term_zh: 端到端系统
+- definition_zh: 从用户输入到最终输出的完整系统设计，整合 LLM、RAG、Agent、评估、部署等所有模块，关注模块间的协作与数据流。
   first_seen: week_08
-
-- term_zh: 端到端系统设计
   term_en: End-to-End System Design
-  definition_zh: 从用户输入到最终输出的完整系统设计，整合 LLM、RAG、Agent、评估、部署等所有模块，关注模块间的协作与数据流。
+  term_zh: 端到端系统设计
+- definition_zh: 将技术系统转化为商业价值的过程，包括价值证明、风险控制、演示准备、决策支持等。
   first_seen: week_08
-
-- term_zh: 商业落地
   term_en: Business Deployment
-  definition_zh: 将技术系统转化为商业价值的过程，包括价值证明、风险控制、演示准备、决策支持等。
+  term_zh: 商业落地
+- definition_zh: 对比不同版本（如不同 Prompt、不同模型）效果的实验方法，通过随机分配流量、收集数据、统计检验来验证哪个版本更好。
   first_seen: week_08
-
-- term_zh: A/B 测试
   term_en: A/B Testing
-  definition_zh: 对比不同版本（如不同 Prompt、不同模型）效果的实验方法，通过随机分配流量、收集数据、统计检验来验证哪个版本更好。
+  term_zh: A/B 测试
+- definition_zh: 逐步将新版本推广给部分用户的发布策略，从 5% → 25% → 50% → 100%，用于降低风险和快速发现问题。
   first_seen: week_08
-
-- term_zh: 灰度发布
   term_en: Canary Deployment
-  definition_zh: 逐步将新版本推广给部分用户的发布策略，从 5% → 25% → 50% → 100%，用于降低风险和快速发现问题。
+  term_zh: 灰度发布
+- definition_zh: 将系统拆分为独立、可替换的模块，每个模块只做一件事，通过接口通信。模块化提高可维护性和可扩展性。
   first_seen: week_08
-
-- term_zh: 模块化设计
   term_en: Modular Design
-  definition_zh: 将系统拆分为独立、可替换的模块，每个模块只做一件事，通过接口通信。模块化提高可维护性和可扩展性。
+  term_zh: 模块化设计
+- definition_zh: 将系统参数外置到配置文件，支持不同环境（开发、测试、生产）的切换，便于维护和版本控制。
   first_seen: week_08
-
-- term_zh: 配置管理
   term_en: Configuration Management
-  definition_zh: 将系统参数外置到配置文件，支持不同环境（开发、测试、生产）的切换，便于维护和版本控制。
+  term_zh: 配置管理
+- definition_zh: 创建和组装系统组件的过程，通常在一个统一的函数中完成，是理解系统架构的入口点。
   first_seen: week_08
-
-- term_zh: 系统初始化
   term_en: System Bootstrap
-  definition_zh: 创建和组装系统组件的过程，通常在一个统一的函数中完成，是理解系统架构的入口点。
+  term_zh: 系统初始化
+- definition_zh: 用于计算系统商业价值的工具，包括成本节省、ROI、回本周期等指标，将技术指标转化为商业语言。
   first_seen: week_08
-
-- term_zh: 商业价值计算器
   term_en: Business Value Calculator
-  definition_zh: 用于计算系统商业价值的工具，包括成本节省、ROI、回本周期等指标，将技术指标转化为商业语言。
+  term_zh: 商业价值计算器
+- definition_zh: 当系统出现问题时恢复到稳定状态的方案，包括触发条件、回滚动作、降级系统等。
   first_seen: week_08
-
-- term_zh: 回滚方案
   term_en: Rollback Plan
-  definition_zh: 当系统出现问题时恢复到稳定状态的方案，包括触发条件、回滚动作、降级系统等。
+  term_zh: 回滚方案
+- definition_zh: 确保项目完整交付的检查列表，包括代码、文档、部署、监控、知识传承等各个方面。
   first_seen: week_08
-
-- term_zh: 交付清单
   term_en: Delivery Checklist
-  definition_zh: 确保项目完整交付的检查列表，包括代码、文档、部署、监控、知识传承等各个方面。
+  term_zh: 交付清单
+- definition_zh: 端到端系统的核心组件，负责协调 Agent、管理数据流、处理错误，确保任务按正确顺序执行。
   first_seen: week_08
-
-- term_zh: 工作流编排器
   term_en: Workflow Orchestrator
-  definition_zh: 端到端系统的核心组件，负责协调 Agent、管理数据流、处理错误，确保任务按正确顺序执行。
-  first_seen: week_08
+  term_zh: 工作流编排器
+- definition_zh: 不提供任何示例，直接让 LLM 完成任务的方式。适用于简单任务或 LLM 已经具备相关知识的场景。
+  first_seen: week_02
+  term_en: Zero-shot Learning
+  term_zh: Zero-shot

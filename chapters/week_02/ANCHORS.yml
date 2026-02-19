@@ -5,41 +5,46 @@
 # - claim: 待验证的结论
 # - evidence: 支持结论的证据来源
 # - verification: 验证方法（通常指向测试文件）
-  - id: prompt-four-elements
-    claim: |
-      包含角色、任务、约束、格式四要素的 Prompt，相比只有任务的 Prompt，
-      输出符合预期的比例提升 30% 以上。
-    evidence: |
-      在 50 条测试样本上的对比实验：
-      - 无四要素：准确率约 65%，格式合规率约 60%
-      - 有四要素：准确率约 85%+，格式合规率约 90%+
-    verification: tests/test_prompt_design.py::TestFourElementPrompt
 
-  - id: few-shot-stability
-    claim: |
-      使用 3-5 个 Few-shot 示例可以将 JSON 输出的格式合规率从约 80% 提升到 95% 以上。
-    evidence: |
-      对比实验数据：
-      - Zero-shot：格式合规率约 78%
-      - 3-shot：格式合规率约 92%
-      - 5-shot：格式合规率约 96%
-      示例数量超过 5 个后收益递减。
-    verification: tests/test_few_shot.py::TestFewShotIntegration
+- id: prompt-four-elements
+  claim: |
+    包含角色、任务、约束、格式四要素的 Prompt，相比只有任务的 Prompt，
+    输出符合预期的比例提升 30% 以上。
+  evidence: |
+    在 50 条测试样本上的对比实验：
+    - 无四要素：准确率约 65%，格式合规率约 60%
+    - 有四要素：准确率约 85%+，格式合规率约 90%+
+  verification: tests/test_prompt_design.py::TestFourElementPrompt
+  file_reference: "chapters/week_02/examples/01_prompt_design.py"
 
-  - id: cot-accuracy
-    claim: |
-      对于需要多步推理的分类任务，使用 CoT 可以将准确率提升 10-20 个百分点。
-    evidence: |
-      在边界模糊样本（如"退款咨询"可能同时涉及"售后"和"财务"）上的对比：
-      - 无 CoT：准确率约 70%
-      - 有 CoT：准确率约 85-90%
-    verification: tests/test_chain_of_thought.py::TestAmbiguousCaseHandling
+- id: few-shot-stability
+  claim: |
+    使用 3-5 个 Few-shot 示例可以将 JSON 输出的格式合规率从约 80% 提升到 95% 以上。
+  evidence: |
+    对比实验数据：
+    - Zero-shot：格式合规率约 78%
+    - 3-shot：格式合规率约 92%
+    - 5-shot：格式合规率约 96%
+    示例数量超过 5 个后收益递减。
+  verification: tests/test_few_shot.py::TestFewShotIntegration
+  file_reference: "chapters/week_02/examples/02_few_shot_examples.py"
 
-  - id: prompt-evaluation-iteration
-    claim: |
-      Prompt 评估需要测试集和量化指标，"感觉变好了"不可靠。
-      存在"感觉变好但实际变差"的案例。
-    evidence: |
-      实际案例：某 Prompt 修改后输出"看起来更流畅"，但格式合规率从 95% 降至 88%。
-      只有通过测试集对比才能发现这种回归。
-    verification: tests/test_evaluation.py::TestVersionComparison
+- id: cot-accuracy
+  claim: |
+    对于需要多步推理的分类任务，使用 CoT 可以将准确率提升 10-20 个百分点。
+  evidence: |
+    在边界模糊样本（如"退款咨询"可能同时涉及"售后"和"财务"）上的对比：
+    - 无 CoT：准确率约 70%
+    - 有 CoT：准确率约 85-90%
+  verification: tests/test_chain_of_thought.py::TestAmbiguousCaseHandling
+  file_reference: "chapters/week_02/examples/03_chain_of_thought.py"
+
+- id: prompt-evaluation-iteration
+  claim: |
+    Prompt 评估需要测试集和量化指标，"感觉变好了"不可靠。
+    存在"感觉变好但实际变差"的案例。
+  evidence: |
+    实际案例：某 Prompt 修改后输出"看起来更流畅"，但格式合规率从 95% 降至 88%。
+    只有通过测试集对比才能发现这种回归。
+  verification: tests/test_evaluation.py::TestVersionComparison
+  file_reference: "chapters/week_02/examples/04_cost_tracking.py"

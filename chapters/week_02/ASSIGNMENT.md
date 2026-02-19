@@ -35,6 +35,8 @@
 
 **1.2 Pydantic 输出格式定义（10 分）**
 
+> 💡 **提示**：我们使用 Pydantic 来定义输出格式，这是第 4 节中介绍的用法。如果你还不熟悉 Pydantic，请先阅读第 4 节的"用 Pydantic 定义数据结构"小节。简单来说，Pydantic 和 `dataclasses` 很像，但多了运行时验证——能自动把字符串 "0.95" 转成浮点数 0.95，还能在数据不符合约束时报错。
+
 使用 Pydantic 定义三个任务的输出格式：
 
 ```python
@@ -82,6 +84,8 @@ class ExtractionResult(BaseModel):
 - 从 YAML 配置文件加载模板
 - 动态填充输入内容
 - 输出完整的 Prompt 字符串
+
+> **注意**：本节的代码骨架使用 `dataclass` 简化实现。如果你已经熟悉 Pydantic，也可以用 Pydantic 重写（参考 1.2 节的示例）。
 
 **代码骨架**：
 

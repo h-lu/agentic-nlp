@@ -81,6 +81,7 @@ class CostTracker:
 
     # 当前主流模型的定价（美元/百万 Token）
     # 数据来源：各模型官方定价页面，2026 年 2 月
+    # TODO: 定价数据需定期更新，建议在每次使用前验证最新价格
     MODEL_PRICING = {
         "gpt-4o": {"input": 2.50, "output": 10.00},
         "gpt-4o-mini": {"input": 0.15, "output": 0.60},
