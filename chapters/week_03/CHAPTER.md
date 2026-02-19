@@ -3,7 +3,9 @@
 > "知识有两种：我们自己知道某个主题，或者我们知道在哪里能找到关于它的信息。"
 > — Samuel Johnson（英国文学家，《英语词典》编者）
 
-前两周你学会了和 LLM "对话"——写 Prompt、调参数、评估效果。但有一个问题一直悬在头顶：LLM 的知识是"冻结"的。它只知道训练数据里见过的东西，而你问的企业内部文档、最新产品手册、上周刚发布的政策，它一概不知。硬问？它可能会自信地编一个看起来很像真的答案。这就是**幻觉**（Hallucination）问题，也是 2024-2025 年企业落地 LLM 的最大障碍。多项行业调研显示，"准确性不足"和"幻觉风险"是企业阻碍 LLM 生产部署的首要顾虑之一。到 2025 年，RAG（Retrieval-Augmented Generation，检索增强生成）几乎成为企业 LLM 应用的标配架构——从 OpenAI 官方的 Assistants API 到各类企业知识库产品，都把"先检索、再生成"作为核心设计（[参考](https://keerok.tech/en/blog/enterprise-rag-building-an-ai-knowledge-base-in-2026/)）。RAG 的原理不复杂：用户提问时，先从你的知识库里找到相关片段，把这些片段作为"参考资料"塞进 Prompt，再让 LLM 基于这些资料生成回答。这周我们不谈理论模型，而是动手搭一个能跑的 RAG 系统——从文档切分到向量检索，从 Embedding 到组装 Prompt，一步一步来。
+前两周你学会了和 LLM "对话"——写 Prompt、调参数、评估效果。但有一个问题一直悬在头顶：LLM 的知识是"冻结"的。它只知道训练数据里见过的东西，而你问的企业内部文档、最新产品手册、上周刚发布的政策，它一概不知。硬问？它可能会自信地编一个看起来很像真的答案。这就是**幻觉**（Hallucination）问题。
+
+到 2026 年，RAG（Retrieval-Augmented Generation，检索增强生成）已成为企业 LLM 应用的标配架构——从 OpenAI 的 Assistants API 到各类企业知识库产品，都把"先检索、再生成"作为核心设计。RAG 的原理不复杂：用户提问时，先从知识库检索相关文档，再把结果作为"参考资料"放入 Prompt，让 LLM 基于这些资料生成回答。这周我们不谈理论模型，而是动手搭一个能跑的 RAG 系统——从文档切分到向量检索，从 Embedding 到组装 Prompt，一步一步来。
 
 <!--
 ================================================================================
@@ -334,8 +336,8 @@ LLM 是在大量文本上训练的，它学到了"什么样的回答听起来合
 小北（困惑）：那它为什么会这样？是不是模型不够好？
 
 部分原因是模型能力，但更多时候是因为：LLM 的知识是"冻结"的。
-它的训练数据有截止日期（比如 2024 年 1 月），
-而你的公司政策是 2025 年 2 月更新的——它根本没见过。
+它的训练数据有截止日期（具体取决于模型版本），
+而你的公司政策是最近更新的——它根本没见过。
 ```
 
 ### 知识截止：LLM 不知道"昨天"发生了什么
@@ -393,11 +395,11 @@ RAG 不改变 LLM 本身，而是改变"输入给 LLM 的内容"。它把一个"
 
 > **AI 时代小专栏：企业知识管理的范式转变 —— 从"搜索"到"问答"**
 >
-> 2024 年之前，企业知识管理的主流形态是"搜索"：员工输入关键词，系统返回一堆文档列表，然后员工自己翻。效率不高，但至少能用。2024 年到 2025 年，情况开始变化。Notion AI、Microsoft Copilot、Google Workspace 的 Gemini 功能，把企业知识管理推向了"问答"时代：员工用自然语言提问，系统直接给出答案——不只是"相关文档在哪里"，而是"答案是什么"。
+> 2024 年之前，企业知识管理的主流形态是"搜索"：员工输入关键词，系统返回一堆文档列表，然后员工自己翻。效率不高，但至少能用。2024 年后，情况开始变化。Notion AI、Microsoft Copilot、Google Workspace 的 Gemini 功能，把企业知识管理推向了"问答"时代：员工用自然语言提问，系统直接给出答案——不只是"相关文档在哪里"，而是"答案是什么"。
 >
 > 这背后就是 RAG 技术。根据 2025-2026 年的行业趋势分析，RAG 正从 AI 聊天增强工具演进为企业知识管理的"战略支柱"。到 2026 年，成功的企业部署将把 RAG 视为"知识运行时"——一个协调检索、生成和治理的编排层。原因很简单：搜索让员工"找文档"，问答让员工"解决问题"。前者需要 5-10 分钟翻阅，后者只需要 10 秒钟。但 RAG 不是银弹。企业落地时遇到的真实挑战包括：文档质量参差不齐、权限管理复杂、知识库更新滞后、检索效果不稳定等。2026 年的企业 RAG 部署越来越优先考虑可解释性、可审计性和对专有知识的受控访问。
 >
-> 参考（访问日期：2026-02-17）：
+> 参考（访问日期：2026-02-19）：
 > - [Enterprise RAG: Building an AI Knowledge Base in 2026](https://keerok.tech/en/blog/enterprise-rag-building-an-ai-knowledge-base-in-2026/)
 > - [RAG in 2025: Bridging Knowledge and Generative AI](https://squirro.com/squirro-blog/state-of-rag-genai)
 > - [The Next Frontier of RAG: How Enterprise Knowledge Systems Will Evolve 2026-2030](https://nstarxinc.com/blog/the-next-frontier-of-rag-how-enterprise-knowledge-systems-will-evolve-2026-2030/)
@@ -510,7 +512,7 @@ def chunk_with_langchain(text: str, chunk_size: int = 500, overlap: int = 50) ->
 | **Overlap** | 可能丢失边界信息 | 冗余过多，存储和计算成本增加 |
 
 经验值：
-- **Chunk Size**：200-500 tokens（约 300-800 中文字符）
+- **Chunk Size**：200-500 tokens（约 300-1000 中文字符）
 - **Overlap**：Chunk Size 的 10-20%
 
 ```text
@@ -518,7 +520,7 @@ def chunk_with_langchain(text: str, chunk_size: int = 500, overlap: int = 50) ->
 
 是的。chunk 太大，检索时混入大量无关内容，LLM 可能被"噪音"干扰。
 chunk 太小，关键信息被切断，检索不到完整答案。
-200-500 tokens 是一个平衡点——既保留足够上下文，又不会太多噪音。
+200-500 tokens（约 300-1000 中文字符）是一个平衡点——既保留足够上下文，又不会太多噪音。
 ```
 
 ### 切分只是第一步
@@ -657,7 +659,7 @@ print(f"100 万字知识库的 Embedding 成本: ${estimate_embedding_cost(1_000
 >
 > 为什么需要混合？向量检索擅长处理同义词、释义、跨语言等"语义层面"的匹配，但它可能漏掉精确的关键词。比如用户搜"2024 年财报"，向量检索可能返回"2023 年财报"（因为语义相似），而关键词检索能精确匹配年份。BM25 + 密集向量融合是 2025-2026 年主流的混合检索方案：结合关键词匹配（BM25）与语义搜索（密集向量），既能捕获精确术语，又能理解上下文相关的语义内容。主流的 RAG 框架（LlamaIndex、LangChain）都内置了混合检索支持。实现方式通常是：向量检索返回 Top-K，关键词检索返回 Top-K，然后合并去重，再用重排序模型精排。Week 04 我们会深入讨论这个话题。
 >
-> 参考（访问日期：2026-02-17）：
+> 参考（访问日期：2026-02-19）：
 > - [Understanding Hybrid Search RAG for Better AI Answers](https://www.meilisearch.com/blog/hybrid-search-rag)
 > - [Optimizing RAG with Hybrid Search & Reranking](https://superlinked.com/vectorhub/articles/optimizing-rag-with-hybrid-search-reranking)
 > - [Hybrid Search Explained](https://weaviate.io/blog/hybrid-search-explained)
@@ -999,9 +1001,13 @@ Embedding 是一次性的，可以缓存。检索本身几乎免费。
 
 小北遇到了这个问题：他问"健身房开放时间"，系统返回了三条完全不相关的政策文档。
 
-原因可能有几个：chunk size 太小，关键信息被切断了；Embedding 模型对中文理解不够好；或者文档本身质量有问题——有些是扫描的 PDF，文字识别错了。
+原因可能有几个：chunk size 太小，关键信息被切断了；Embedding 模型对中文理解不够好；或者查询问题表述与文档中的表述差异较大。
 
-怎么办？先检查检索日志，看看哪些文档被召回了。如果是召回问题，调整 chunk size 或换一个更好的 Embedding 模型。如果是文档问题，先做数据清洗。
+怎么办？先检查检索日志，看看哪些文档被召回了。如果是召回问题，调整 chunk size 或换一个更好的 Embedding 模型。如果是查询表述问题，试着用不同的说法问同样的问题。
+
+> **注**：扫描 PDF 的 OCR 识别错误需要专门的文档预处理技术，不在本周讨论范围。Week 06 会介绍更高级的文档处理方法。
+>
+> 临时解决方案：使用 PyMuPDF 或 pdfplumber 进行更准确的文本提取，或者使用服务商提供的 OCR API。
 
 **坑 2：检索到太多无关文档**
 
@@ -1236,6 +1242,8 @@ Week 01-02 你学了"怎么和 LLM 沟通"（API 调用、Prompt Engineering）�
 -->
 
 ## Definition of Done
+
+> 💡 **提示**：完成 Definition of Done (DoD) 确保你掌握了本章所有核心概念和技能。
 
 学完本章后，你应该能够回答以下问题：
 
