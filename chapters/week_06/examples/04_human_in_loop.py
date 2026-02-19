@@ -346,6 +346,10 @@ def main() -> None:
     print("Human-in-the-Loop 演示")
     print("=" * 70)
 
+    # 设置随机种子以确保结果可重复
+    import random
+    random.seed(42)
+
     # 创建带人工审核的 Agent
     agent = HumanInTheLoopAgent(
         name="TextAgent",

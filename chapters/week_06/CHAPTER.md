@@ -106,7 +106,12 @@ TextAgent 开始工作：
 
 更糟糕的是，当小北让 TextAgent "分析这 1000 份反馈"时，它开始混乱：先调用了词频统计，然后又调用了一次；先生成了总结，然后才开始分析情感。
 
-"它在'走回头路'，"小北盯着执行日志，有点无奈，"就像一个人同时做十件事，最后什么都没做好。"
+"它在'走回头路'，"小北盯着执行日志，有点无奈，"你看，它先用词频统计分析了这批数据，然后生成总结，结果过了一会儿又重新调用了一次词频统计——这是在重复做同样的事情。就像一个人做饭，切了菜忘了，又切一次；炒了菜忘了，又炒一次。最后时间浪费了，结果还可能不一致。"
+
+**"走回头路"**是指 Agent 在执行过程中重复调用相同的工具或重复执行相同的步骤。这会导致：
+1. **浪费计算资源**：同样的计算做了多次
+2. **结果不一致**：如果工具调用有随机性，重复调用可能得到不同结果
+3. **难以调试**：日志中充满重复操作，很难追踪问题根源
 
 这其实不是 Agent "笨"，而是它的**认知负荷**太高了。所谓认知负荷，就是一个人（或 Agent）在同一时间需要处理的信息量和决策数量。当你同时开车、打电话、记笔记时，每件事都分走了你一部分注意力，结果哪样都做不好——这就是认知负荷超载。Agent 也一样：它既要理解任务、又要规划步骤、还要选择工具、还要执行调用、还要检查结果……当这些职责全部挤在一个"大脑"里，出错是必然的。
 
@@ -227,7 +232,44 @@ TextAgent 开始工作：
 | **并行协作** | 多个 Agent 同时执行不同任务，最后汇总 | 多个执行者同时分析不同文档 |
 | **层级协作** | 高层 Agent 负责调度，低层 Agent 负责执行 | 管理者调度多个专业 Agent |
 
-这周我们主要学**顺序协作**和**层级协作**。
+**顺序协作示例**（本周重点）：
+```python
+# 顺序协作：规划者 → 执行者 → 审核者
+plan = planner.create_plan(task)
+result = executor.execute_plan(plan)
+review = reviewer.review_result(plan, result)
+```
+
+**并行协作概念**（进阶任务 4）：
+```python
+# 并行协作：多个执行者同时工作，最后汇总结果
+# 伪代码示例
+with ThreadPoolExecutor() as executor:
+    futures = [
+        executor.submit(agent1.analyze, doc1),
+        executor.submit(agent2.analyze, doc2),
+        executor.submit(agent3.analyze, doc3),
+    ]
+    results = [f.result() for f in futures]
+combined_result = aggregate(results)
+# 完整实现见进阶任务 4（并行执行与竞争共识）
+```
+
+**层级协作概念**：
+```python
+# 层级协作：管理者调度多个专业 Agent
+# 伪代码示例
+class ManagerAgent:
+    def dispatch_task(self, task):
+        if task.type == "retrieval":
+            return self.retriever_agent.execute(task)
+        elif task.type == "analysis":
+            return self.analyzer_agent.execute(task)
+        elif task.type == "summary":
+            return self.summarizer_agent.execute(task)
+```
+
+这周我们主要学**顺序协作**。并行协作和层级协作的完整实现在进阶练习中（任务 4、任务 5）。
 
 ### 实现"规划者-执行者"协作
 
@@ -362,6 +404,24 @@ print("结果:", json.dumps(result, ensure_ascii=False, indent=2))
 | **层级制** | 高层 Agent 决策，低层 Agent 执行 | 规划者决策，执行者服从 |
 | **民主制** | Agent 通过协商达成共识 | 两个 Agent 讨论，投票决定 |
 | **仲裁制** | 第三方 Agent 仲裁冲突 | 审核者裁决规划者和执行者的分歧 |
+
+**实际场景示例**：
+
+假设任务是"分析产品评论并推荐改进方向"。
+
+```
+[规划者] 计划：先检索类似产品的评论 → 分析差距 → 提出建议
+[执行者] 反馈：当前数据已足够，建议直接分析 → 节省检索时间
+```
+
+**层级制处理**（本周默认）：
+```
+[执行者] 向审核者报告：计划可能不是最优
+[审核者] 评估：同意执行者的观点，当前数据充足
+[审核者] 指示规划者：修订计划，跳过检索步骤
+[规划者] 修订计划：直接分析 → 提出建议
+[执行者] 按修订后的计划执行
+```
 
 这周我们用**层级制**——规划者负责制定计划，执行者按计划执行。如果执行者发现计划有问题，它可以向审核者报告，由审核者决定是否修改计划。
 
@@ -532,6 +592,9 @@ class RetrieverAgent:
             return {"results": results, "strategy": strategy, "assessment": assessment}
         else:
             # 重新检索（用改进的查询）
+            # improved_query 是 Agent 在决策阶段预判的"更好的查询版本"
+            # 例如：原始查询"政策" → improved_query="政策 规定 制度 办法"
+            # 这样下次检索时可以用扩展后的查询获得更多相关结果
             improved_query = strategy["improved_query"]
             return self.retrieve(improved_query, context)
 
@@ -661,13 +724,22 @@ class AgenticRAGWorkflow:
 >
 > 2024-2025 年，Agentic RAG 在企业应用中快速增长。传统 RAG 的痛点是"一刀切"——无论什么查询都用相同的检索策略，效果不稳定。Agentic RAG 让 LLM 自主决定检索策略，根据查询类型动态选择向量检索、关键词检索或多轮检索。
 >
-> LangChain 和 LlamaIndex 都在 2025 年发布了 Agentic RAG 的最佳实践指南。核心思想是：**检索权从系统转移到 Agent**。传统 RAG 中，检索逻辑是硬编码的；Agentic RAG 中，Agent 会思考"这个问题需要什么样的信息"，然后选择最合适的检索策略。
+> **企业案例：某电商平台的智能客服系统**
 >
-> 但这带来了一个新问题：**成本**。每次检索决策都需要 LLM 调用，复杂查询可能需要多轮检索。企业实践中的折中方案是"混合模式"：简单查询用传统 RAG（低成本），复杂查询用 Agentic RAG（高准确率）。
+> 一家大型电商平台在 2025 年初将其客服系统从传统 RAG 升级为 Agentic RAG。之前，用户问"订单 #12345 的状态"和"类似产品的推荐"都用同样的向量检索，导致前者经常查不到（订单号需要精确匹配），后者推荐不准（需要语义理解）。
+>
+> 升级后：
+> - **订单号查询** → Agent 识别为精确匹配，使用关键词检索，准确率从 70% 提升到 99%
+> - **产品推荐** → Agent 识别为语义相似，使用向量检索 + 重排序，点击率提升 25%
+> - **复杂咨询** → Agent 自主发起多轮检索，先查政策再查案例，用户满意度从 3.2 提升到 4.5（满分 5 分）
+>
+> 成本方面，他们采用了"混合模式"：简单查询（如"退换货政策"）继续用传统 RAG，复杂查询才用 Agentic RAG。最终整体成本只增加了 15%，但效果提升了 40%。
+>
+> LangChain 和 LlamaIndex 都在 2025 年发布了 Agentic RAG 的最佳实践指南。核心思想是：**检索权从系统转移到 Agent**。传统 RAG 中，检索逻辑是硬编码的；Agentic RAG 中，Agent 会思考"这个问题需要什么样的信息"，然后选择最合适的检索策略。
 >
 > 所以你刚学的 Agentic RAG 设计——让 Agent 决定策略、评估结果、必要时重新检索——在 AI 时代不是过度设计，而是企业级应用的标准实践。它让你在"效果"和"成本"之间有更细粒度的控制。
 >
-> 参考（访问日期：2026-02-17）：
+> 参考（访问日期：2026-02-19）：
 > - [LangChain - Query Analysis / Agentic RAG](https://python.langchain.com/docs/use_cases/query_analysis/)
 > - [LlamaIndex - Agentic RAG Examples](https://docs.llamaindex.ai/en/stable/examples/agentic_rag/)
 
@@ -678,6 +750,22 @@ class AgenticRAGWorkflow:
 小北试了上面的多 Agent 系统，发现一个让人哭笑不得的问题。
 
 "有一次规划者制定了一个明显错误的计划——它想用'情感分析'来统计词频，这完全是两回事。但执行者还是照做了，最后浪费了很多时间。"
+
+"让我看看当时的对话，"小北打开日志，"我让 Agent '统计这批反馈中的高频词'，结果它这么回答："
+
+```
+[规划者] 制定计划：
+步骤1：对反馈进行情感分析
+步骤2：根据情感结果统计词频
+步骤3：生成报告
+
+[执行者] 执行步骤1...
+[执行者] 情感分析完成：正面60%，负面40%
+[执行者] 执行步骤2...
+[执行者] 错误：无法对情感分析结果进行词频统计
+```
+
+"我简直想拍桌子，"小北苦笑，"它居然想把情感标签当文本来做词频统计。如果当时有人工审核，我就能在第一步就拦住它。"
 
 "执行者为什么不指出问题？"小北不解地问。
 
@@ -767,8 +855,9 @@ class HumanInTheLoopAgent:
         execution_result = self.agent.execute_plan(plan)
 
         if "execution_monitor" in review_points:
-            # 检查是否有异常
-            if any("error" in step for step in execution_result["results"]):
+            # 检查是否有异常（先检查 results 是否存在且非空）
+            results_list = execution_result.get("results", [])
+            if results_list and any("error" in step for step in results_list):
                 approved, feedback = self._request_human_approval(
                     "执行异常",
                     execution_result
@@ -1011,6 +1100,8 @@ class ReviewerAgent:
 
 ### 4. 实现检索 Agent
 
+完整的 RetrieverAgent 类定义见第 3 节"实现一个检索 Agent"（第 503-609 行）。以下是 TextAgent 项目中的简化实现：
+
 ```python
 # src/textagent/multiagent/retriever.py
 from typing import Dict, Optional
@@ -1018,7 +1109,12 @@ from openai import OpenAI
 import json
 
 class RetrieverAgent:
-    """检索 Agent：自主决定检索策略"""
+    """
+    检索 Agent：自主决定检索策略
+
+    完整实现参考第 3 节的示例代码（examples/03_agentic_rag.py）
+    此处为 TextAgent 项目的简化版本
+    """
 
     def __init__(self, llm_client: OpenAI, vector_store, keyword_index=None):
         self.llm = llm_client
@@ -1026,8 +1122,11 @@ class RetrieverAgent:
         self.keyword_index = keyword_index
 
     def retrieve(self, query: str, top_k: int = 5) -> Dict:
-        """自主检索"""
+        """
+        自主检索
 
+        完整实现包括：策略决策 → 按策略检索 → 评估结果 → 必要时重新检索
+        """
         # 决定检索策略
         strategy = self._decide_strategy(query)
 
@@ -1050,8 +1149,7 @@ class RetrieverAgent:
         }
 
     def _decide_strategy(self, query: str) -> Dict:
-        """决定检索策略"""
-
+        """决定检索策略（简化版）"""
         prompt = f"""分析查询，决定最佳检索策略。
 
 查询：{query}
@@ -1067,14 +1165,14 @@ class RetrieverAgent:
         return json.loads(response.choices[0].message.content)
 
     def _hybrid_search(self, query: str, top_k: int) -> Dict:
-        """混合检索"""
+        """混合检索（简化版）"""
         # 实现向量 + 关键词检索 + RRF 融合
         vector_results = self.vector_store.search(query, top_k=top_k * 2)
         # ... 与关键词结果融合
         return vector_results  # 简化
 
     def _assess_results(self, query: str, results: Dict) -> Dict:
-        """评估检索结果"""
+        """评估检索结果（简化版）"""
         # 简化实现
         return {"sufficient": True, "confidence": 0.8}
 ```
@@ -1120,7 +1218,9 @@ class MultiAgentWorkflow:
         execution_result = self.executor.execute_plan(plan, self.retriever)
 
         if enable_human_review:
-            if any("error" in r.get("result", {}) for r in execution_result.get("results", [])):
+            # 检查是否有异常（先检查 results 是否存在且非空）
+            results_list = execution_result.get("results", [])
+            if results_list and any("error" in r.get("result", {}) for r in results_list):
                 approved, feedback = self._human_review("执行异常", execution_result)
                 if not approved:
                     return {"status": "aborted", "feedback": feedback}

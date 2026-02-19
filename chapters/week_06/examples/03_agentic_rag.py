@@ -440,7 +440,6 @@ def main() -> None:
         demo_mode = True
     else:
         demo_mode = False
-        llm_client = OpenAI()
     llm_client = None if demo_mode else OpenAI()
 
     # 初始化存储
@@ -477,7 +476,7 @@ def main() -> None:
         print(f"最终策略: {result.strategy.method.value}")
         print(f"策略理由: {result.strategy.reasoning}")
         print(f"结果充分: {result.assessment.sufficient}")
-        print(f"评估置信度: {result.assessment.assessment.confidence if hasattr(result.assessment, 'confidence') else 'N/A'}")
+        print(f"评估置信度: {result.assessment.confidence if hasattr(result.assessment, 'confidence') else 'N/A'}")
         print(f"检索到的文档数: {len(result.documents)}")
 
         print("\n文档列表:")

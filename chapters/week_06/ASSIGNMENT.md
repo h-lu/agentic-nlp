@@ -73,7 +73,17 @@ class PlannerAgent:
             feedback: 反馈意见
 
         Returns:
-            修订后的计划
+            修订后的计划，应包含：
+            - 保留原计划的 "task_understanding" 和 "subtasks" 结构
+            - 添加 "revision_note" 字段，记录修订原因和内容
+            - 可以调整 subtasks 的顺序、添加/删除步骤、修改工具或参数
+
+        示例修订后的计划：
+        {
+            "task_understanding": "...",
+            "subtasks": [...],  # 修改后的步骤
+            "revision_note": "根据反馈增加了情感分析步骤"
+        }
         """
         # TODO: 实现
         pass
@@ -360,7 +370,20 @@ class RetrieverAgent:
         决定检索策略
 
         Returns:
-            {"method": "vector/hybrid", "reasoning": "原因", "top_k": 5}
+            {
+                "method": "vector/hybrid/multi_round",
+                "reasoning": "选择该策略的原因",
+                "top_k": 5,
+                "improved_query": "改进后的查询（可选）"
+            }
+
+        说明：
+        - method: 检索方法（vector=向量检索, hybrid=混合检索, multi_round=多轮检索）
+        - reasoning: 为什么选择这个策略（帮助解释决策过程）
+        - top_k: 返回多少个结果
+        - improved_query: 当原始查询太短或太模糊时，可以返回一个改进版本
+          例如：查询"政策" → improved_query="政策 规定 制度 办法"
+          这个字段会在第一次检索结果不足时用于重新检索
         """
         # TODO: 实现
         # 提示：考虑查询的特征
@@ -530,9 +553,9 @@ class HumanInTheLoopWorkflow:
         请求人工批准
 
         Returns:
-            (approved: bool, feedback: str|None)
-            approved: True 表示批准，False 表示拒绝
-            feedback: 拒绝时的反馈意见
+            tuple[bool, str|None]: (approved, feedback)
+            - approved: True 表示批准，False 表示拒绝
+            - feedback: 拒绝时的反馈意见
         """
         # TODO: 实现
         # 在实际应用中，这里可能是 Web 界面或消息通知
@@ -1190,6 +1213,8 @@ A：几种策略：
 1. **层级制**：规划者决策，执行者服从（本周默认）
 2. **民主制**：Agent 协商，投票决定
 3. **仲裁制**：第三方 Agent 裁决（见任务 5）
+
+**注意**：如 CHAPTER.md 第 2 节"阿码的问题：决策冲突怎么办？"中所述（第 354-370 行），民主制在多 Agent 系统中往往是最差的选择。因为 LLM 没有"真正的信念"，两个 Agent 协商可能被对方说服，达成"平庸的共识"而非"最优决策"。这就像"两个都没去过目的地的人争论走哪条路，最后可能选了一条最远的路"。因此本周推荐使用层级制——明确责任边界，规划者负责决策，执行者负责执行。
 
 **Q：检索 Agent 如何知道哪种策略更好？**
 

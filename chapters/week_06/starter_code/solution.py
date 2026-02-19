@@ -329,8 +329,13 @@ class RetrieverAgent:
     """
 
     def __init__(self, llm_client: Optional[OpenAI] = None):
-        self.llm = llm_client or (OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-                                 if os.environ.get("OPENAI_API_KEY") and OpenAI else None)
+        # LLM 客户端初始化：优先使用传入的客户端，其次尝试环境变量
+        if llm_client is not None:
+            self.llm = llm_client
+        elif OpenAI is not None and os.environ.get("OPENAI_API_KEY"):
+            self.llm = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        else:
+            self.llm = None
 
         # 模拟文档存储
         self.documents = [
