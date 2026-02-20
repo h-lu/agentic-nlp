@@ -136,7 +136,7 @@ Week 01 我们就学过 **范式转变**——从"训练模型"到"设计系统"
 └─────────────────────────────────────────────┘
     ↓
 响应给用户
-```text
+```
 
 阿码问："这不就是多 Agent 系统吗？"
 
@@ -222,7 +222,7 @@ class WorkflowOrchestrator:
             "cost_usd": context.state.get("cost_usd", 0),
             "latency_ms": context.state.get("latency_ms", 0)
         }
-```python
+```
 
 老潘点评道："这个设计的核心是 `TaskContext`——它像一辆'数据巴士'，把各个模块连起来。每个模块只从巴士上拿自己需要的数据，把结果放回巴士。这样模块之间解耦，你换一个 Agent 不用改其他代码。"
 
@@ -271,7 +271,7 @@ class SystemConfig(BaseModel):
 # 使用
 config = SystemConfig.from_yaml("config/production.yaml")
 planner_config = config.agents["planner"]
-```python
+```
 
 这样，你可以有 `config/development.yaml`、`config/production.yaml` 不同环境的配置，切换环境只需要改一个文件。
 
@@ -319,7 +319,7 @@ if __name__ == "__main__":
     system = create_system(config)
     result = system.run("分析这份数据")
     print(result)
-```python
+```
 
 老潘说："这个 `create_system` 函数是你的'系统蓝图'。任何人看这个函数，就知道系统是怎么组装的。这就是**可维护性**——新来的人读一遍代码就能理解整体架构。"
 
@@ -419,13 +419,13 @@ report = calculator.calculate_savings(daily_requests=1000, days=90)
 
 print(f"90 天节省成本: ${report['savings_usd']:.2f}")
 print(f"节省比例: {report['savings_percentage']:.1f}%")
-```python
+```
 
 输出示例：
 ```text
 90 天节省成本: $220,500.00
 节省比例: 98.6%
-```text
+```
 
 老潘说："这才是老板想看的数字——你不用解释什么是 RAG，直接告诉他'90 天节省 22 万美元'。商业价值报告是你的'门票'，有了这个，老板才会愿意听技术细节。"
 
@@ -530,7 +530,7 @@ class ProductionSystem:
             return {"status": "escalated", "message": "转人工处理"}
         else:
             return {"status": "fallback", "result": self._call_legacy_system(user_input)}
-```python
+```
 
 老潘说："有了这个，老板才会放心。商业落地不是'技术完美'，而是**风险可控**。你能证明'出了问题有办法解决'，老板才敢让你上生产。"
 
@@ -663,7 +663,7 @@ for user_id, user_input in mock_user_requests:
 analysis = ab_engine.analyze()
 print(f"胜者: {analysis['winner']}")
 print(f"提升: {analysis['lift']:.1f}%")
-```python
+```
 
 阿码举手："等等，p < 0.05 是什么意思？"
 
@@ -687,7 +687,7 @@ A/B 测试告诉你"B 比 A 好"，但你应该立即把所有流量切到 B 吗
 第 7 天：50% 流量 → 监控指标
   ↓ 无问题
 第 14 天：100% 流量
-```text
+```
 
 ```python
 # examples/03_canary.py
@@ -817,7 +817,7 @@ async def submit_feedback(request_id: str, rating: int, comment: str):
         timestamp=datetime.now().isoformat()
     ))
     return {"status": "received"}
-```python
+```
 
 老潘说："有了反馈数据，你就可以做**数据驱动的迭代**。不是'我觉得该改什么'，而是'用户抱怨最多的地方是什么'。这就是持续优化的基础。"
 
@@ -936,7 +936,7 @@ textagent/
 ## 许可证
 
 MIT License
-```markdown
+```
 
 > **关键要点**：
 > - README 是项目的"门面"，5 分钟内让陌生人理解你做什么
@@ -1015,7 +1015,7 @@ MIT License
 1. 在 `tools/` 中定义工具函数
 2. 在 `ToolCapability` 中注册
 3. 更新 Agent 的 Prompt 模板
-```markdown
+```
 
 > **关键要点**：
 > - 架构文档回答"为什么这样设计"，不是"怎么实现"
@@ -1108,7 +1108,7 @@ response = requests.post(
 result = response.json()
 print(result["cost_usd"])
 \`\`\`
-```markdown
+```
 
 > **关键要点**：
 > - API 文档是给集成方用的，不是给开发者看的
@@ -1204,7 +1204,7 @@ kubectl set image deployment/textagent textagent=textagent:v1.0.0
 - 应用日志：`/var/log/textagent/app.log`
 - 访问日志：`/var/log/textagent/access.log`
 - Trace 日志：发送到 LangSmith
-```markdown
+```
 
 > **关键要点**：
 > - 运维手册是给凌晨 3 点被叫醒的人写的
@@ -1266,7 +1266,7 @@ kubectl set image deployment/textagent textagent=textagent:v1.0.0
 - [ ] 演示脚本已准备
 - [ ] 风险评估已完成
 - [ ] 回滚方案已确认
-```markdown
+```
 
 老潘说："这个清单就是你的'交付保险'。每打一个勾，接手的人就少一个坑。当所有勾都打完，你才能放心地离开。"
 
@@ -1317,7 +1317,7 @@ if __name__ == "__main__":
     system = create_system("config/production.yaml")
     result = system.run("分析这份数据")
     print(result)
-```python
+```
 
 **2. 准备项目展示材料**
 
@@ -1339,7 +1339,7 @@ def generate_value_report(daily_requests: int, days: int = 90) -> Dict:
 # 报告示例
 # 90 天节省成本: $220,500
 # 节省比例: 98.6%
-```text
+```
 
 **3. 实现 A/B 测试框架**
 
@@ -1360,7 +1360,7 @@ def run_ab_test(config: ABTestConfig) -> Dict:
         engine.record_result(version, result)
 
     return engine.analyze()
-```python
+```
 
 **4. 生成完整文档**
 
@@ -1374,7 +1374,7 @@ def run_ab_test(config: ABTestConfig) -> Dict:
 ├── api.md                 # API 接口、示例代码
 ├── operations.md          # 部署、监控、排错
 └── delivery_checklist.md  # 交付清单
-```markdown
+```
 
 **5. 收敛终稿 report.md**
 
@@ -1470,7 +1470,7 @@ def generate_html_report(markdown_path: str, output_path: str):
 
 if __name__ == "__main__":
     generate_html_report("report.md", "report.html")
-```python
+```
 
 ### 最终成果
 
@@ -1495,7 +1495,7 @@ Week 08 结束时，你将拥有：
 git tag -a v1.0.0 -m "Release TextAgent v1.0"
 git push origin v1.0.0
 git log --oneline --graph -n 20
-```bash
+```
 
 常见坑：
 - 提交前忘记更新文档：代码改了但文档没改，接手的人会困惑
